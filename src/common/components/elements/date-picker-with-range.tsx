@@ -15,8 +15,20 @@ import {
 
 import { useTheme } from 'next-themes';
 
-export function DatePickerWithRange({ className }: { className?: string }) {
-  const [date, setDate] = React.useState<any | null>(null);
+type DatePickerWithRangeProps = {
+  className?: string;
+  date?: {
+    from: Date | undefined;
+    to: Date | undefined;
+  };
+  onSelect?: (date: { from: Date; to: Date }) => void;
+};
+
+export function DatePickerWithRange({
+  className,
+  date,
+  onSelect,
+}: DatePickerWithRangeProps) {
   const { theme: mode } = useTheme();
 
   return (
@@ -50,7 +62,8 @@ export function DatePickerWithRange({ className }: { className?: string }) {
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            // @ts-ignore
+            onSelect={onSelect}
             numberOfMonths={2}
           />
         </PopoverContent>

@@ -2,31 +2,36 @@
 
 import { CupBar, NoteIcon, CheckShape, Spam } from '@/common/components/svg';
 import { cn } from '@/common/libs';
+import { DashboardType } from '@/common/types';
 import { Icon } from '@iconify/react';
 
-const EcommerceStats = () => {
+type EcommerceStatsProps = {
+  dashboard: DashboardType;
+};
+
+const EcommerceStats = ({ dashboard }: EcommerceStatsProps) => {
   const data = [
     {
-      text: 'Total Sales',
-      total: '42,750.98',
+      text: 'Total Items',
+      total: dashboard?.items || 0,
       color: 'primary',
       icon: <CupBar className="w-3.5 h-3.5" />,
     },
     {
-      text: 'Today Orders',
-      total: '536,23,3',
+      text: 'Total Supply',
+      total: dashboard?.supplys || 0,
       color: 'warning',
       icon: <NoteIcon className="w-3.5 h-3.5" />,
     },
     {
-      text: 'Completed Orders',
-      total: '234,1',
+      text: 'Total Transaction',
+      total: dashboard?.transactions || 0,
       color: 'success',
       icon: <CheckShape className="w-3.5 h-3.5" />,
     },
     {
-      text: 'Pending Orders',
-      total: '332,34',
+      text: 'Total',
+      total: dashboard?.total || 0,
       color: 'destructive',
       icon: <Spam className="w-3.5 h-3.5" />,
     },

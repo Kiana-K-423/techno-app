@@ -1,8 +1,8 @@
 import React from 'react';
-import { LandingPage } from '@/module/landing-page';
+import { redirect } from 'next/navigation';
 
 const page = () => {
-  return <LandingPage />;
+  redirect('/dashboard');
 };
 
 export default page;
