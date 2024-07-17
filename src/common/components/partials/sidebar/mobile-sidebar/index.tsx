@@ -101,38 +101,13 @@ const MobileSidebar = ({
               <li key={`menu_key_${i}`}>
                 {/* single menu  */}
 
-                {!item.child && !item.isHeader && (
+                {!item.isHeader && (
                   <SingleMenuItem item={item} collapsed={collapsed} />
                 )}
 
                 {/* menu label */}
-                {item.isHeader && !item.child && !collapsed && (
+                {item.isHeader && !collapsed && (
                   <MenuLabel item={item} trans={trans} />
-                )}
-
-                {/* sub menu */}
-                {item.child && (
-                  <>
-                    <SubMenuHandler
-                      item={item}
-                      toggleSubmenu={toggleSubmenu}
-                      index={i}
-                      activeSubmenu={activeSubmenu}
-                      collapsed={collapsed}
-                    />
-
-                    {!collapsed && (
-                      <NestedSubMenu
-                        toggleMultiMenu={toggleMultiMenu}
-                        activeMultiMenu={activeMultiMenu}
-                        activeSubmenu={activeSubmenu}
-                        item={item}
-                        index={i}
-                        title={''}
-                        trans={undefined}
-                      />
-                    )}
-                  </>
                 )}
               </li>
             ))}

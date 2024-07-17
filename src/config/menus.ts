@@ -93,7 +93,6 @@ export const menusConfig = {
         title: 'Dashboard',
         icon: DashBoard,
         href: '/dashboard',
-        child: null,
       },
       {
         isHeader: true,

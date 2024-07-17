@@ -99,7 +99,7 @@ const PopoverSidebar = ({ trans }: { trans: string }) => {
             <li key={`menu_key_${i}`}>
               {/* single menu  */}
 
-              {!item.child && !item.isHeader && (
+              {!item.isHeader && (
                 <SingleMenuItem
                   item={item}
                   collapsed={collapsed}
@@ -108,33 +108,8 @@ const PopoverSidebar = ({ trans }: { trans: string }) => {
               )}
 
               {/* menu label */}
-              {item.isHeader && !item.child && !collapsed && (
+              {item.isHeader && !collapsed && (
                 <MenuLabel item={item} trans={trans} />
-              )}
-
-              {/* sub menu */}
-              {item.child && (
-                <>
-                  <SubMenuHandler
-                    item={item}
-                    toggleSubmenu={toggleSubmenu}
-                    index={i}
-                    activeSubmenu={activeSubmenu}
-                    collapsed={collapsed}
-                    menuTitle={item.title}
-                    trans={trans}
-                  />
-                  {!collapsed && (
-                    <NestedSubMenu
-                      toggleMultiMenu={toggleMultiMenu}
-                      activeMultiMenu={activeMultiMenu}
-                      activeSubmenu={activeSubmenu}
-                      item={item}
-                      index={i}
-                      trans={trans}
-                    />
-                  )}
-                </>
               )}
             </li>
           ))}
