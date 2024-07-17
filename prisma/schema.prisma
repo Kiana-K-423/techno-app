@@ -10,8 +10,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model User {
@@ -22,8 +23,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?
-
-  @@fulltext([email, name])
 }
 
 model Room {
@@ -34,8 +33,6 @@ model Room {
   deletedAt DateTime?
 
   items     Item[]
-
-  @@fulltext([name])
 }
 
 model Categories {
@@ -46,8 +43,6 @@ model Categories {
   deletedAt DateTime?
 
   items     Item[]
-
-  @@fulltext([name])
 }
 
 model Item {
@@ -67,8 +62,6 @@ model Item {
   deletedAt DateTime?
 
   transactions Transaction[]
-
-  @@fulltext([name, unit])
 }
 
 enum TransactionType {
@@ -90,6 +83,4 @@ model Transaction {
   createdAt DateTime @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?
-
-  @@fulltext([type])
 }
