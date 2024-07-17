@@ -37,22 +37,13 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
 
   const toggleSubMenu = (index: number) => {
     setActiveIndex(index);
-    if (menus[index].child) {
-      setCurrentSubMenu(menus[index].child);
-      setSubmenu(false);
-      setCollapsed(false);
-      if (!isDesktop) {
-        setMenuOverlay(true);
-      }
-    } else {
-      setSubmenu(true);
-      setCollapsed(true);
+    setSubmenu(true);
+    setCollapsed(true);
 
-      if (!isDesktop) {
-        // when location match need to close the sub menu
-        if (isLocationMatch(menus[index].title, locationName)) {
-          setSubmenu(false);
-        }
+    if (!isDesktop) {
+      // when location match need to close the sub menu
+      if (isLocationMatch(menus[index].title, locationName)) {
+        setSubmenu(false);
       }
     }
   };
