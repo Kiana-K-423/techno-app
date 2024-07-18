@@ -7,6 +7,7 @@ export const getTransactions = async ({
   search = '',
   sort = 'asc',
   itemId = '',
+  type = 'IN',
 }) => {
   const response = await api.get('/transaction', {
     params: {
@@ -15,6 +16,7 @@ export const getTransactions = async ({
       search,
       sort,
       itemId,
+      type,
     },
   });
   return response.data;

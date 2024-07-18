@@ -12,12 +12,12 @@ import {
 import { debounce } from '@/common/libs';
 import { getItems, getTransactions } from '@/common/services';
 import { Itemtype } from '@/common/types';
-import { TableItem, CreateForm } from '@/module/transaction-management';
+import { TableItem, CreateForm } from '@/module/supply-management';
 import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-const TransactionPage = () => {
+const SupplyPage = () => {
   const [sort, setSort] = useState('asc');
   const [filterItem, setFilterItem] = useState('All Item');
   const [search, setSearch] = useState('');
@@ -31,7 +31,7 @@ const TransactionPage = () => {
   const { data: transactions } = useQuery({
     queryKey: ['transactions', { sort, search, filterItem }],
     queryFn: () =>
-      getTransactions({ sort, itemId: filterItem, search, type: 'OUT' }),
+      getTransactions({ sort, itemId: filterItem, search, type: 'IN' }),
   });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,7 @@ const TransactionPage = () => {
   };
 
   return (
-    <CardSnippet title="Transaction Management">
+    <CardSnippet title="Supply Management">
       <div className="flex justify-between items-center gap-4 mb-1">
         <div className="flex gap-3">
           <Select onValueChange={(v) => setSort(v)}>
@@ -95,4 +95,4 @@ const TransactionPage = () => {
   );
 };
 
-export default TransactionPage;
+export default SupplyPage;

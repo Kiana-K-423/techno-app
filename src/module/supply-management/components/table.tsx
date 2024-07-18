@@ -164,11 +164,6 @@ type EditingDialogProps = {
   handleOpen: () => void;
 };
 
-const transactionType = [
-  { value: 'IN', label: 'IN' },
-  { value: 'OUT', label: 'OUT' },
-];
-
 const styles = {
   option: (provided: any, state: any) => ({
     ...provided,
@@ -247,7 +242,7 @@ const EditingDialog = ({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Transaction {transaction.uuid}</DialogTitle>
+          <DialogTitle>Edit Supply {transaction.uuid}</DialogTitle>
           <form
             onSubmit={
               // @ts-ignore

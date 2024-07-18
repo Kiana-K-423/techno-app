@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get('search') || '';
   const sort = searchParams.get('sort') || 'asc';
   let itemId = searchParams.get('itemId') || '';
+  let type = searchParams.get('type') || 'IN';
 
   if (itemId === 'All Item') {
     itemId = '';
@@ -35,6 +36,7 @@ export async function GET(request: NextRequest) {
       itemId: {
         contains: itemId,
       },
+      transaction: type as TransactionType,
       deletedAt: null,
     },
     orderBy: {
@@ -52,6 +54,7 @@ export async function GET(request: NextRequest) {
       itemId: {
         contains: itemId,
       },
+      transaction: type as TransactionType,
       deletedAt: null,
     },
   });

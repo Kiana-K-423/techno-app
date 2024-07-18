@@ -57,7 +57,7 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
       quantity: 0,
       type: 'kg',
       total: 0,
-      transaction: 'OUT',
+      transaction: 'IN',
       orderingCosts: 0,
       storageCosts: 0,
     },
@@ -93,11 +93,11 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
-        <Button type="button">Add Transaction</Button>
+        <Button type="button">Add Supply</Button>
       </DialogTrigger>
       <DialogContent aria-describedby="create-item">
         <DialogHeader>
-          <DialogTitle>Create Transaction</DialogTitle>
+          <DialogTitle>Create Supply</DialogTitle>
 
           <form
             onSubmit={
