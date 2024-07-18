@@ -72,9 +72,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const newData = datas.map((data) => {
+    return {
+      ...data,
+      image: `${process.env.NEXT_PUBLIC_SITE_URL}/images/items/${data.image}`,
+    };
+  });
+
   return new Response(
     JSON.stringify({
-      data: datas,
+      data: newData,
       message: 'Data found',
       page: page,
       totalData: count,
