@@ -13,6 +13,9 @@ export async function GET(request: NextRequest) {
     include: {
       // @ts-ignore
       deletedAt: false,
+      _count: {
+        select: { items: true },
+      },
     },
     where: {
       name: {
