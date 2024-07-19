@@ -116,18 +116,32 @@ export async function POST(request: NextRequest) {
     lastData ? +lastData.uuid?.split('-')[1] + 1 : new Date().getTime()
   }`;
 
-  const data = await prisma.transaction.create({
-    data: {
-      uuid: uuid,
-      itemId: String(body.itemId),
-      quantity: +Number(body.quantity),
-      total: +Number(body.total),
-      transaction: body.transaction as TransactionType,
-      orderingCosts: +Number(body.orderingCosts),
-      storageCosts: +Number(body.storageCosts),
-      type: String(body.type),
-    },
-  });
+  const [data] = await prisma.$transaction([
+    prisma.transaction.create({
+      data: {
+        uuid: uuid,
+        itemId: String(body.itemId),
+        quantity: +Number(body.quantity),
+        total: +Number(body.total),
+        transaction: body.transaction as TransactionType,
+        orderingCosts: +Number(body.orderingCosts),
+        storageCosts: +Number(body.storageCosts),
+        type: String(body.type),
+      },
+    }),
+    prisma.item.update({
+      where: {
+        id: String(body.itemId),
+      },
+      data: {
+        quantity: {
+          [body.transaction === 'IN' ? 'increment' : 'decrement']: +Number(
+            body.quantity
+          ),
+        },
+      },
+    }),
+  ]);
 
   return new Response(JSON.stringify({ message: 'Data created', data: data }), {
     status: 201,
