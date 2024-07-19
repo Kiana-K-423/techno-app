@@ -29,6 +29,6 @@ export const updateRoom = async (data: Omit<Room, 'createdAt'>) => {
 };
 
 export const deleteRoom = async (id: string) => {
-  const response = await api.delete(`/room/${id}`);
+  const response = await api.delete(`/room?id=${id}`);
   return response.data;
 };
