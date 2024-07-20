@@ -1,15 +1,17 @@
 'use client';
 
 import { CupBar, NoteIcon, CheckShape, Spam } from '@/common/components/svg';
-import { cn } from '@/common/libs';
+import { cn, transformToCurrency } from '@/common/libs';
 import { DashboardType } from '@/common/types';
 import { Icon } from '@iconify/react';
+import { Loader2 } from 'lucide-react';
 
 type EcommerceStatsProps = {
   dashboard: DashboardType;
+  isFetching: boolean;
 };
 
-const EcommerceStats = ({ dashboard }: EcommerceStatsProps) => {
+const EcommerceStats = ({ dashboard, isFetching }: EcommerceStatsProps) => {
   const data = [
     {
       text: 'Total Items',
@@ -31,7 +33,7 @@ const EcommerceStats = ({ dashboard }: EcommerceStatsProps) => {
     },
     {
       text: 'Total',
-      total: dashboard?.total || 0,
+      total: transformToCurrency(dashboard?.total) || 0,
       color: 'destructive',
       icon: <Spam className="w-3.5 h-3.5" />,
     },
@@ -88,7 +90,11 @@ const EcommerceStats = ({ dashboard }: EcommerceStatsProps) => {
           </span>
           <div className="flex items-center gap-1">
             <span className="text-lg font-semibold text-default-900  dark:text-primary-foreground">
-              {item.total}
+              {isFetching ? (
+                <Loader2 className="ltr:mr-2 rtl:ml-2 h-4 w-4 animate-spin" />
+              ) : (
+                item.total
+              )}
             </span>
             <Icon
               icon="heroicons:arrow-trending-up"

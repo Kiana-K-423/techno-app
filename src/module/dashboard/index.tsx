@@ -1,6 +1,6 @@
 'use client';
 
-import RevinueChart from './components/revinue-chart';
+import EoqTable from './components/eoq-table';
 import {
   Card,
   CardContent,
@@ -15,6 +15,7 @@ import { getDashboard } from '@/common/services/dashboard';
 import { format } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { getEOQ } from '@/common/services';
 
 interface DashboardProps {
   trans: {
@@ -47,7 +48,14 @@ const Dashboard = ({ trans }: DashboardProps) => {
       }),
   });
 
-  if (isFetching) return <div>Loading...</div>;
+  const { data: eoq, isLoading } = useQuery({
+    queryKey: ['eoq'],
+    queryFn: () =>
+      getEOQ({
+        month: '',
+        year: '',
+      }),
+  });
 
   return (
     <div className="space-y-6">
@@ -58,24 +66,25 @@ const Dashboard = ({ trans }: DashboardProps) => {
       <Card>
         <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <EcommerceStats dashboard={dashboard.data} />
+            <EcommerceStats
+              dashboard={dashboard?.data || 0}
+              isFetching={isFetching}
+            />
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader className="border-none pb-0 mb-0">
+        <CardHeader className="border-none pb-0 mb-3">
           <div className="flex flex-wrap items-center gap-3">
             <CardTitle className="flex-1 whitespace-nowrap">
-              Average Revenue
+              Economic Order Quantity (EOQ)
             </CardTitle>
-            <div className="flex-none">
-              <DashboardSelect />
-            </div>
+            <div className="flex-none">{/* <DashboardSelect /> */}</div>
           </div>
         </CardHeader>
         <CardContent className="px-0">
-          <RevinueChart />
+          <EoqTable datas={eoq?.data || []} isLoading={isLoading} />
         </CardContent>
       </Card>
     </div>
