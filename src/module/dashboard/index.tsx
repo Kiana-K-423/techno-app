@@ -30,10 +30,7 @@ const Dashboard = ({ trans }: DashboardProps) => {
     from: undefined,
     to: undefined,
   });
-
-  const handleSelectDate = (date: { from: Date; to: Date }) => {
-    setSelectedDate(date);
-  };
+  const [page, setPage] = useState(1);
 
   const { data: dashboard, isFetching } = useQuery({
     queryKey: ['dashboard', { from: selectedDate.from, to: selectedDate.to }],
@@ -49,13 +46,22 @@ const Dashboard = ({ trans }: DashboardProps) => {
   });
 
   const { data: eoq, isLoading } = useQuery({
-    queryKey: ['eoq'],
+    queryKey: ['eoq', { month: '', year: '', page: page }],
     queryFn: () =>
       getEOQ({
         month: '',
         year: '',
+        page: page,
+        limit: 10,
       }),
   });
+  const handleSelectDate = (date: { from: Date; to: Date }) => {
+    setSelectedDate(date);
+  };
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+  };
 
   return (
     <div className="space-y-6">
@@ -84,7 +90,13 @@ const Dashboard = ({ trans }: DashboardProps) => {
           </div>
         </CardHeader>
         <CardContent className="px-0">
-          <EoqTable datas={eoq?.data || []} isLoading={isLoading} />
+          <EoqTable
+            datas={eoq?.data || []}
+            isLoading={isLoading}
+            handlePage={handlePageChange}
+            page={page}
+            totalPage={eoq?.totalPage || 0}
+          />
         </CardContent>
       </Card>
     </div>

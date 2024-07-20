@@ -65,7 +65,7 @@ const RoomPage = () => {
           <CreateForm open={openCreateDialog} handleOpen={handleCreateDialog} />
         </div>
       </div>
-      <TableItem rooms={rooms?.data || []} />
+      <TableItem rooms={rooms?.data || []} totalPage={rooms?.totalPage || 0} />
     </CardSnippet>
   );
 };

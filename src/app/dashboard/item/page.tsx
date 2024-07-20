@@ -93,6 +93,7 @@ const ItemPage = () => {
         items={items?.data || []}
         rooms={rooms?.data || []}
         categories={categories?.data || []}
+        totalPage={items?.totalPage || 0}
       />
     </CardSnippet>
   );

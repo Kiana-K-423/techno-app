@@ -90,7 +90,11 @@ const SupplyPage = () => {
           />
         </div>
       </div>
-      <TableItem items={items?.data || []} datas={transactions?.data || []} />
+      <TableItem
+        items={items?.data || []}
+        datas={transactions?.data || []}
+        totalPage={transactions?.totalPage || 0}
+      />
     </CardSnippet>
   );
 };

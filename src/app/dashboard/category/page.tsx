@@ -65,7 +65,10 @@ const CategoryPage = () => {
           <CreateForm open={openCreateDialog} handleOpen={handleCreateDialog} />
         </div>
       </div>
-      <TableItem datas={categories?.data || []} />
+      <TableItem
+        datas={categories?.data || []}
+        totalPage={categories?.totalPage || 0}
+      />
     </CardSnippet>
   );
 };

@@ -5,6 +5,8 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const month = searchParams.get('month') || new Date().getMonth() + 1;
   const year = searchParams.get('year') || new Date().getFullYear();
+  const page = searchParams.get('page') || 1;
+  const limit = searchParams.get('limit') || 10;
 
   const datas = await prisma.item.findMany({
     include: {
@@ -34,6 +36,17 @@ export async function GET(request: NextRequest) {
         },
       },
     },
+    where: {
+      deletedAt: null,
+    },
+    orderBy: {
+      id: 'asc',
+    },
+    skip: (((+page as number) - 1) * (+limit as number)) as number,
+    take: +limit as number,
+  });
+
+  const count = await prisma.item.count({
     where: {
       deletedAt: null,
     },
@@ -105,6 +118,8 @@ export async function GET(request: NextRequest) {
   return new Response(
     JSON.stringify({
       data: dataWithEOQ,
+      totalData: count,
+      totalPage: Math.ceil(count / (limit as number)),
       message: 'Data found',
     }),
     {
