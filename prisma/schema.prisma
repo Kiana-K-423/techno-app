@@ -1,67 +1,75 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   name      String?
-  password  String   @db.VarChar(255)
-  createdAt DateTime @default(now())
+  password  String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?
 }
 
 model Room {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?
-
   items     Item[]
 }
 
 model Categories {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?
-
   items     Item[]
 }
 
 model Item {
-  id        String   @id @default(uuid())
-  name      String
-  roomId    String 
-  room      Room     @relation(fields: [roomId], references: [id])
-  categoryId String
-  category  Categories @relation(fields: [categoryId], references: [id])
-  quantity  Int @default(0)
-  unit      String 
-  price     Float @default(0)
-  image     String @db.VarChar(255)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime? @updatedAt
-  deletedAt DateTime?
-
+  id           String        @id @default(uuid())
+  name         String
+  roomId       String
+  categoryId   String
+  quantity     Int           @default(0)
+  unit         String
+  price        Float         @default(0)
+  image        String        @db.VarChar(255)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime?     @updatedAt
+  deletedAt    DateTime?
+  category     Categories    @relation(fields: [categoryId], references: [id])
+  room         Room          @relation(fields: [roomId], references: [id])
   transactions Transaction[]
+}
+
+model Transaction {
+  id            String          @id @default(uuid())
+  uuid          String          @unique
+  itemId        String
+  customerId    String?
+  quantity      Int
+  type          String
+  total         Float
+  transaction   TransactionType
+  orderingCosts Float?
+  storageCosts  Float?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime?       @updatedAt
+  deletedAt     DateTime?
+  item          Item            @relation(fields: [itemId], references: [id])
+  customer      Customer?        @relation(fields: [customerId], references: [id])
 }
 
 enum TransactionType {
@@ -69,18 +77,14 @@ enum TransactionType {
   OUT
 }
 
-model Transaction {
-  id        String   @id @default(uuid())
-  uuid      String   @unique
-  itemId    String
-  item      Item     @relation(fields: [itemId], references: [id])
-  quantity  Int
-  type      String
-  total     Float
-  transaction      TransactionType
-  orderingCosts     Float?
-  storageCosts      Float?
-  createdAt DateTime @default(now())
+model Customer {
+  id        String    @id @default(uuid())
+  name      String
+  phone     String
+  address   String
+  createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   deletedAt DateTime?
+
+  Transaction Transaction[]
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Button,
   CardSnippet,
   Input,
   Select,
@@ -10,28 +11,20 @@ import {
   SelectValue,
 } from '@/common/components/elements';
 import { debounce } from '@/common/libs';
-import { getItems, getTransactions } from '@/common/services';
-import { Itemtype } from '@/common/types';
-import { TableItem, CreateForm } from '@/module/supply-management';
+import { getCategorys, getCustomers } from '@/common/services';
+import { TableItem, CreateForm } from '@/module/customer-management';
 import { useQuery } from '@tanstack/react-query';
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-const SupplyPage = () => {
+const CustomerPage = () => {
   const [sort, setSort] = useState('asc');
-  const [filterItem, setFilterItem] = useState('All Item');
   const [search, setSearch] = useState('');
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
 
-  const { data: items } = useQuery({
-    queryKey: ['items'],
-    queryFn: () => getItems({ limit: 100 }),
-  });
-
-  const { data: transactions } = useQuery({
-    queryKey: ['transactions-in', { sort, search, filterItem }],
-    queryFn: () =>
-      getTransactions({ sort, itemId: filterItem, search, type: 'IN' }),
+  const { data: customers } = useQuery({
+    queryKey: ['customers', { sort, search }],
+    queryFn: () => getCustomers({ sort, search }),
   });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +38,7 @@ const SupplyPage = () => {
   };
 
   return (
-    <CardSnippet title="Supply Management">
+    <CardSnippet title="Customer Management">
       <div className="flex justify-between items-center gap-4 mb-1">
         <div className="flex gap-3">
           <Select onValueChange={(v) => setSort(v)}>
@@ -55,20 +48,6 @@ const SupplyPage = () => {
             <SelectContent>
               <SelectItem value="asc">Asc</SelectItem>
               <SelectItem value="desc">Desc</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select onValueChange={(v) => setFilterItem(v)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Items" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All Item">All Item</SelectItem>
-              {items?.data.map((item: Itemtype) => (
-                <SelectItem key={item.id} value={item.id}>
-                  {item.name}
-                </SelectItem>
-              ))}
             </SelectContent>
           </Select>
 
@@ -83,20 +62,15 @@ const SupplyPage = () => {
           </div>
         </div>
         <div className="flex-none">
-          <CreateForm
-            items={items?.data || []}
-            open={openCreateDialog}
-            handleOpen={handleCreateDialog}
-          />
+          <CreateForm open={openCreateDialog} handleOpen={handleCreateDialog} />
         </div>
       </div>
       <TableItem
-        items={items?.data || []}
-        datas={transactions?.data || []}
-        totalPage={transactions?.totalPage || 0}
+        datas={customers?.data || []}
+        totalPage={customers?.totalPage || 0}
       />
     </CardSnippet>
   );
 };
 
-export default SupplyPage;
+export default CustomerPage;

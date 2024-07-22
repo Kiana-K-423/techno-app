@@ -25,38 +25,41 @@ import {
   AlertDialogTrigger,
 } from '@/common/components/elements';
 import { Icon } from '@iconify/react';
-import { Itemtype, TransactionType } from '@/common/types';
-import { cn, transformToCurrency } from '@/common/libs';
+import { CategoryType, CustomerType, Room } from '@/common/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteTransaction, updateTransaction } from '@/common/services';
+import {
+  deleteCustomer,
+  updateCategory,
+  updateCustomer,
+} from '@/common/services';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { generatePageNumbers } from '@/common/helper';
+import { cn } from '@/common/libs';
 
 type TableItemProps = {
-  items: Itemtype[];
-  datas: TransactionType[];
+  datas: CustomerType[];
   totalPage: number;
 };
 
-export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
+export const TableItem = ({ datas, totalPage }: TableItemProps) => {
   const [open, setOpen] = useState(false);
+  const [editData, setEditData] = useState<CustomerType | null>(null);
   const [page, setPage] = useState(1);
 
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    mutationFn: deleteTransaction,
+    mutationFn: deleteCustomer,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions-in'] });
-      toast.success('Transaction deleted successfully');
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      toast.success('Category deleted successfully');
     },
     onError: () => {
-      toast.error('Failed to delete transaction');
+      toast.error('Failed to delete category');
     },
   });
 
@@ -64,8 +67,9 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
     await mutate(id);
   };
 
-  const handleOpen = () => {
+  const handleOpen = (data: CustomerType) => {
     setOpen((prev) => !prev);
+    setEditData(data);
   };
 
   const handlePage = (page: number) => {
@@ -79,35 +83,24 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="font-semibold">UUID</TableHead>
-            <TableHead>Item</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Total Transaction</TableHead>
-            <TableHead>Transaction Type</TableHead>
-            <TableHead>Ordering Costs</TableHead>
-            <TableHead>Storage Costs</TableHead>
+            <TableHead className="font-semibold">Name</TableHead>
+            <TableHead>Phone Number</TableHead>
+            <TableHead>Address</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {datas?.map((data: TransactionType) => (
-            <TableRow key={data.uuid}>
-              <TableCell className=" font-medium">{data.uuid}</TableCell>
-              <TableCell>{data?.item?.name}</TableCell>
-              <TableCell>{data.quantity}</TableCell>
-              <TableCell>{data.type}</TableCell>
-              <TableCell>{transformToCurrency(data.total)}</TableCell>
-              <TableCell>{data.transaction}</TableCell>
-              <TableCell>{transformToCurrency(data.orderingCosts)}</TableCell>
-              <TableCell>{transformToCurrency(data.storageCosts)}</TableCell>
+          {datas?.map((data: CustomerType) => (
+            <TableRow key={data.name}>
+              <TableCell>{data.name}</TableCell>
+              <TableCell>{data.phone}</TableCell>
+              <TableCell>{data.address}</TableCell>
               <TableCell className="flex justify-end">
                 <div className="flex gap-3">
                   <EditingDialog
-                    transaction={data}
-                    items={items}
+                    data={editData}
                     open={open}
-                    handleOpen={handleOpen}
+                    handleOpen={() => handleOpen(data)}
                   />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -149,7 +142,7 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
             </TableRow>
           )) || (
             <TableRow>
-              <TableCell colSpan={9} className="text-center" align="center">
+              <TableCell colSpan={7} className="text-center" align="center">
                 No data
               </TableCell>
             </TableRow>
@@ -205,66 +198,43 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
 };
 
 type EditingDialogProps = {
-  items: Itemtype[];
-  transaction: TransactionType;
+  data: CustomerType | null;
   open: boolean;
   handleOpen: () => void;
 };
 
-const styles = {
-  option: (provided: any, state: any) => ({
-    ...provided,
-    fontSize: '14px',
-  }),
-};
-
 const schema = z.object({
   id: z.string(),
-  itemId: z.string(),
-  quantity: z.number(),
-  type: z.string(),
-  total: z.number(),
-  transaction: z.enum(['IN', 'OUT']),
-  orderingCosts: z.number(),
-  storageCosts: z.number(),
+  name: z.string(),
+  phone: z.string(),
+  address: z.string(),
 });
 
-const EditingDialog = ({
-  items,
-  transaction,
-  open,
-  handleOpen,
-}: EditingDialogProps) => {
-  const { register, handleSubmit, reset, formState, control } = useForm({
+const EditingDialog = ({ data, open, handleOpen }: EditingDialogProps) => {
+  const { register, handleSubmit, reset } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      id: transaction.id,
-      itemId: transaction.itemId,
-      quantity: transaction.quantity,
-      type: transaction.type,
-      total: transaction.total,
-      transaction: transaction.transaction,
-      orderingCosts: transaction.orderingCosts,
-      storageCosts: transaction.storageCosts,
+      id: data?.id,
+      name: data?.name,
+      phone: data?.phone,
+      address: data?.address,
     },
   });
 
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    mutationFn: updateTransaction,
+    mutationFn: updateCustomer,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions-in'] });
-      toast.success('Transaction updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['customers'] });
+      toast.success('Customer updated successfully');
     },
     onError: () => {
-      toast.error('Failed to update transaction');
+      toast.error('Failed to update customer');
     },
   });
 
-  const onSubmit = async (
-    data: Omit<TransactionType, 'createdAt' | 'uuid'>
-  ) => {
+  const onSubmit = async (data: Omit<CustomerType, 'createdAt'>) => {
     await mutate(data as any);
     handleOpen();
   };
@@ -276,7 +246,7 @@ const EditingDialog = ({
   }, [open]);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpen} key={transaction.uuid}>
+    <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
         <Button
           size="icon"
@@ -289,7 +259,7 @@ const EditingDialog = ({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Supply {transaction.uuid}</DialogTitle>
+          <DialogTitle>Edit Customer {data?.name}</DialogTitle>
           <form
             onSubmit={
               // @ts-ignore
@@ -304,88 +274,40 @@ const EditingDialog = ({
                   required: true,
                   minLength: 1,
                 })}
+                defaultValue={data?.id}
               />
             </div>
             <div>
-              <Label className="mb-2">Item</Label>
-              <Controller
-                control={control}
-                name="itemId"
-                rules={{ required: true }}
-                render={({ field: { ref, onChange } }) => {
-                  const defaultValue = items.find(
-                    (c) => c.id === transaction.itemId
-                  );
-                  return (
-                    <Select
-                      ref={ref}
-                      classNamePrefix="select"
-                      // @ts-ignore
-                      options={items.map((item) => ({
-                        value: item.id,
-                        label: item.name,
-                      }))}
-                      styles={styles}
-                      defaultValue={{
-                        value: defaultValue?.id,
-                        label: defaultValue?.name,
-                      }}
-                      onChange={(val) => onChange(val?.value || '')}
-                      aria-invalid={formState.errors.itemId ? 'true' : 'false'}
-                    />
-                  );
-                }}
-              />
-            </div>
-            <div>
-              <Label className="mb-2">Quantity</Label>
+              <Label className="mb-2">Name</Label>
               <Input
-                placeholder="Quantity"
-                type="number"
-                {...register('quantity', {
+                placeholder="Name"
+                {...register('name', {
                   required: true,
-                  valueAsNumber: true,
+                  minLength: 1,
                 })}
+                defaultValue={data?.name}
               />
             </div>
             <div>
-              <Label className="mb-2">Type</Label>
+              <Label className="mb-2">Phone</Label>
               <Input
-                placeholder="Type"
-                {...register('type', { required: true })}
-              />
-            </div>
-            <div>
-              <Label className="mb-2">Total</Label>
-              <Input
-                placeholder="Total"
-                type="number"
-                {...register('total', {
+                placeholder="Phone"
+                {...register('phone', {
                   required: true,
-                  valueAsNumber: true,
+                  minLength: 1,
                 })}
+                defaultValue={data?.phone}
               />
             </div>
             <div>
-              <Label className="mb-2">Ordering Costs</Label>
+              <Label className="mb-2">Address</Label>
               <Input
-                placeholder="Ordering Costs"
-                type="number"
-                {...register('orderingCosts', {
+                placeholder="Address"
+                {...register('address', {
                   required: true,
-                  valueAsNumber: true,
+                  minLength: 1,
                 })}
-              />
-            </div>
-            <div>
-              <Label className="mb-2">Storage Costs</Label>
-              <Input
-                placeholder="Storage Costs"
-                type="number"
-                {...register('storageCosts', {
-                  required: true,
-                  valueAsNumber: true,
-                })}
+                defaultValue={data?.address}
               />
             </div>
             <div className="flex justify-end space-x-3">

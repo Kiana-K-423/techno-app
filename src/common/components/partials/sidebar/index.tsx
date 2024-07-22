@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useSidebar, useThemeStore } from '@/common/store';
+import { useSidebar } from '@/common/store';
 import { useMediaQuery } from '@/common/hooks';
 import ModuleSidebar from './module';
 import PopoverSidebar from './popover';

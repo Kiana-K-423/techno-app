@@ -12,11 +12,11 @@ import {
   Label,
 } from '@/common/components/elements';
 import { createTransaction } from '@/common/services';
-import { Itemtype, TransactionType } from '@/common/types';
+import { CustomerType, Itemtype, TransactionType } from '@/common/types';
 import { Units } from '@/constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
@@ -24,6 +24,7 @@ import { z } from 'zod';
 
 type CreateFormProps = {
   items: Itemtype[];
+  customers: CustomerType[];
   open: boolean;
   handleOpen: () => void;
 };
@@ -37,6 +38,7 @@ const styles = {
 
 const schema = z.object({
   itemId: z.string(),
+  customerId: z.string(),
   quantity: z.number(),
   type: z.string(),
   total: z.number(),
@@ -45,26 +47,36 @@ const schema = z.object({
   storageCosts: z.number(),
 });
 
-export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
+export const CreateForm = ({
+  items,
+  customers,
+  handleOpen,
+  open,
+}: CreateFormProps) => {
   const { register, handleSubmit, reset, formState, control } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       itemId: '',
+      customerId: '',
       quantity: 0,
       type: 'Kg',
       total: 0,
       transaction: 'OUT',
       orderingCosts: 0,
       storageCosts: 0,
+      name: '',
+      phone: '',
+      address: '',
     },
   });
+  const [isNewCustomer, setIsNewCustomer] = useState(false);
 
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
     mutationFn: createTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transaction-out'] });
       toast.success('Transaction created successfully');
     },
     onError: () => {
@@ -126,6 +138,79 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
                 )}
               />
             </div>
+            <div>
+              <div
+                className={`flex items-center justify-between ${
+                  !isNewCustomer ? 'mb-2' : ''
+                }`}
+              >
+                <Label>Customer</Label>
+                <Button
+                  type="button"
+                  onClick={() => setIsNewCustomer((prev) => !prev)}
+                  variant="outline"
+                  color="primary"
+                  size="sm"
+                >
+                  {isNewCustomer ? 'Select Customer' : 'New Customer'}
+                </Button>
+              </div>
+              {!isNewCustomer && (
+                <Controller
+                  control={control}
+                  name="customerId"
+                  rules={{ required: true }}
+                  render={({ field: { onChange, value, ref } }) => (
+                    <Select
+                      ref={ref}
+                      classNamePrefix="select"
+                      // @ts-ignore
+                      options={customers.map((item) => ({
+                        value: item.id,
+                        label: item.name,
+                      }))}
+                      styles={styles}
+                      value={customers.find((c) => c.name === value)}
+                      // @ts-ignore
+                      onChange={(val) => onChange(val?.value || '')}
+                      aria-invalid={formState.errors.itemId ? 'true' : 'false'}
+                    />
+                  )}
+                />
+              )}
+            </div>
+            {isNewCustomer && (
+              <>
+                <div className="!mt-0">
+                  <Label className="mb-2">Name</Label>
+                  <Input
+                    placeholder="Name"
+                    {...register('name', {
+                      required: true,
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label className="mb-2">Phone</Label>
+                  <Input
+                    placeholder="Phone"
+                    type="tel"
+                    {...register('phone', {
+                      required: true,
+                    })}
+                  />
+                </div>
+                <div>
+                  <Label className="mb-2">Address</Label>
+                  <Input
+                    placeholder="Address"
+                    {...register('address', {
+                      required: true,
+                    })}
+                  />
+                </div>
+              </>
+            )}
             <div>
               <Label className="mb-2">Quantity</Label>
               <Input

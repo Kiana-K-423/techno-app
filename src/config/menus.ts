@@ -5,6 +5,7 @@ import {
   Grid,
   PretentionChartLine,
   Heroicon,
+  Users,
 } from '@/common/components/svg';
 
 export interface MenuItemProps {
@@ -50,6 +51,11 @@ export const menusConfig = {
       icon: PretentionChartLine,
       href: '/dashboard/transaction',
     },
+    {
+      title: 'Customers',
+      icon: Users,
+      href: '/dashboard/customer',
+    },
   ],
   sidebarNav: {
     modern: [
@@ -82,6 +88,11 @@ export const menusConfig = {
         title: 'Transaction',
         icon: PretentionChartLine,
         href: '/dashboard/transaction',
+      },
+      {
+        title: 'Customers',
+        icon: Users,
+        href: '/dashboard/customer',
       },
     ],
     classic: [
@@ -126,6 +137,11 @@ export const menusConfig = {
         title: 'Transaction',
         icon: PretentionChartLine,
         href: '/dashboard/transaction',
+      },
+      {
+        title: 'Customers',
+        icon: Users,
+        href: '/dashboard/customer',
       },
     ],
   },

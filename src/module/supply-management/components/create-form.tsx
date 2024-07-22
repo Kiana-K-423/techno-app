@@ -60,6 +60,7 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
       transaction: 'IN',
       orderingCosts: 0,
       storageCosts: 0,
+      customerId: '',
     },
   });
 
@@ -68,7 +69,7 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
   const { mutate } = useMutation({
     mutationFn: createTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transactions-in'] });
       toast.success('Transaction created successfully');
     },
     onError: () => {

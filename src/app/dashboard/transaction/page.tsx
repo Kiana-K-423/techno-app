@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/common/components/elements';
 import { debounce } from '@/common/libs';
-import { getItems, getTransactions } from '@/common/services';
+import { getCustomers, getItems, getTransactions } from '@/common/services';
 import { Itemtype } from '@/common/types';
 import { TableItem, CreateForm } from '@/module/transaction-management';
 import { useQuery } from '@tanstack/react-query';
@@ -29,9 +29,14 @@ const TransactionPage = () => {
   });
 
   const { data: transactions } = useQuery({
-    queryKey: ['transactions', { sort, search, filterItem }],
+    queryKey: ['transaction-out', { sort, search, filterItem }],
     queryFn: () =>
       getTransactions({ sort, itemId: filterItem, search, type: 'OUT' }),
+  });
+
+  const { data: customers } = useQuery({
+    queryKey: ['customers'],
+    queryFn: () => getCustomers({ limit: 100 }),
   });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,12 +92,14 @@ const TransactionPage = () => {
             items={items?.data || []}
             open={openCreateDialog}
             handleOpen={handleCreateDialog}
+            customers={customers?.data || []}
           />
         </div>
       </div>
       <TableItem
         items={items?.data || []}
         datas={transactions?.data || []}
+        customers={customers?.data || []}
         totalPage={transactions?.totalPage || 0}
       />
     </CardSnippet>

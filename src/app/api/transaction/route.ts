@@ -28,6 +28,13 @@ export async function GET(request: NextRequest) {
           name: true,
         },
       },
+      customer: {
+        // @ts-ignore
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
     where: {
       uuid: {
@@ -36,6 +43,15 @@ export async function GET(request: NextRequest) {
       itemId: {
         contains: itemId,
       },
+      ...(type === 'OUT'
+        ? {
+            customer: {
+              phone: {
+                contains: search,
+              },
+            },
+          }
+        : false),
       transaction: type as TransactionType,
       deletedAt: null,
     },
@@ -48,12 +64,33 @@ export async function GET(request: NextRequest) {
 
   const count = await prisma.transaction.count({
     where: {
-      uuid: {
-        contains: search,
-      },
-      itemId: {
-        contains: itemId,
-      },
+      AND: [
+        {
+          OR: [
+            {
+              uuid: {
+                contains: search,
+              },
+            },
+            ...(type === 'OUT'
+              ? [
+                  {
+                    customer: {
+                      phone: {
+                        contains: search,
+                      },
+                    },
+                  },
+                ]
+              : []),
+          ],
+        },
+        {
+          itemId: {
+            contains: itemId,
+          },
+        },
+      ],
       transaction: type as TransactionType,
       deletedAt: null,
     },
@@ -93,8 +130,6 @@ export async function POST(request: NextRequest) {
     !body?.quantity ||
     !body?.total ||
     !body?.transaction ||
-    !body?.orderingCosts ||
-    !body?.storageCosts ||
     !body?.type
   ) {
     return new Response(
@@ -121,6 +156,7 @@ export async function POST(request: NextRequest) {
       data: {
         uuid: uuid,
         itemId: String(body.itemId),
+        customerId: body.customerId ? String(body.customerId) : null,
         quantity: +Number(body.quantity),
         total: +Number(body.total),
         transaction: body.transaction as TransactionType,
@@ -153,6 +189,7 @@ export async function PUT(request: NextRequest) {
   const {
     id,
     itemId,
+    customerId,
     quantity,
     total,
     transaction,
@@ -188,6 +225,7 @@ export async function PUT(request: NextRequest) {
     },
     data: {
       itemId: itemId ? String(itemId) : exist.itemId,
+      customerId: customerId ? String(customerId) : exist.customerId,
       quantity: quantity ? +Number(quantity) : exist.quantity,
       total: total ? +Number(total) : exist.total,
       transaction: transaction ? transaction : exist.transaction,

@@ -6,8 +6,6 @@ import {
   TableHeader,
   TableRow,
   Button,
-  Avatar,
-  AvatarFallback,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -25,18 +23,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-  AvatarImage,
 } from '@/common/components/elements';
 import { Icon } from '@iconify/react';
-import { CategoryType, Itemtype, Room, TransactionType } from '@/common/types';
+import { CustomerType, Itemtype, TransactionType } from '@/common/types';
 import { cn, transformToCurrency } from '@/common/libs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  deleteItem,
-  deleteTransaction,
-  updateItem,
-  updateTransaction,
-} from '@/common/services';
+import { deleteTransaction, updateTransaction } from '@/common/services';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
@@ -48,11 +40,17 @@ import { Units } from '@/constant';
 
 type TableItemProps = {
   items: Itemtype[];
+  customers: CustomerType[];
   datas: TransactionType[];
   totalPage: number;
 };
 
-export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
+export const TableItem = ({
+  items,
+  customers,
+  datas,
+  totalPage,
+}: TableItemProps) => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
 
@@ -61,7 +59,7 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
   const { mutate } = useMutation({
     mutationFn: deleteTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transaction-out'] });
       toast.success('Transaction deleted successfully');
     },
     onError: () => {
@@ -90,6 +88,7 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
           <TableRow>
             <TableHead className="font-semibold">UUID</TableHead>
             <TableHead>Item</TableHead>
+            <TableHead>Customer</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Unit</TableHead>
             <TableHead>Total Transaction</TableHead>
@@ -102,6 +101,7 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
             <TableRow key={data.uuid}>
               <TableCell className=" font-medium">{data.uuid}</TableCell>
               <TableCell>{data?.item?.name}</TableCell>
+              <TableCell>{data?.customer?.name}</TableCell>
               <TableCell>{data.quantity}</TableCell>
               <TableCell>{data.type}</TableCell>
               <TableCell>{transformToCurrency(data.total)}</TableCell>
@@ -110,6 +110,7 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
                 <div className="flex gap-3">
                   <EditingDialog
                     transaction={data}
+                    customers={customers}
                     items={items}
                     open={open}
                     handleOpen={handleOpen}
@@ -211,6 +212,7 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
 
 type EditingDialogProps = {
   items: Itemtype[];
+  customers: CustomerType[];
   transaction: TransactionType;
   open: boolean;
   handleOpen: () => void;
@@ -226,6 +228,7 @@ const styles = {
 const schema = z.object({
   id: z.string(),
   itemId: z.string(),
+  customerId: z.string(),
   quantity: z.number(),
   type: z.string(),
   total: z.number(),
@@ -236,6 +239,7 @@ const schema = z.object({
 
 const EditingDialog = ({
   items,
+  customers,
   transaction,
   open,
   handleOpen,
@@ -245,6 +249,7 @@ const EditingDialog = ({
     defaultValues: {
       id: transaction.id,
       itemId: transaction.itemId,
+      customerId: transaction.customerId,
       quantity: transaction.quantity,
       type: transaction.type,
       total: transaction.total,
@@ -259,7 +264,7 @@ const EditingDialog = ({
   const { mutate } = useMutation({
     mutationFn: updateTransaction,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transaction-out'] });
       toast.success('Transaction updated successfully');
     },
     onError: () => {
@@ -340,6 +345,30 @@ const EditingDialog = ({
                     />
                   );
                 }}
+              />
+            </div>
+            <div>
+              <Label className="MB-2">Customer</Label>
+              <Controller
+                control={control}
+                name="customerId"
+                rules={{ required: true }}
+                render={({ field: { onChange, value, ref } }) => (
+                  <Select
+                    ref={ref}
+                    classNamePrefix="select"
+                    // @ts-ignore
+                    options={customers.map((item) => ({
+                      value: item.id,
+                      label: item.name,
+                    }))}
+                    styles={styles}
+                    value={customers.find((c) => c.name === value)}
+                    // @ts-ignore
+                    onChange={(val) => onChange(val?.value || '')}
+                    aria-invalid={formState.errors.itemId ? 'true' : 'false'}
+                  />
+                )}
               />
             </div>
             <div>
