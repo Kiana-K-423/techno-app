@@ -44,6 +44,7 @@ import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { generatePageNumbers } from '@/common/helper';
+import { Units } from '@/constant';
 
 type TableItemProps = {
   items: Itemtype[];
@@ -90,11 +91,9 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
             <TableHead className="font-semibold">UUID</TableHead>
             <TableHead>Item</TableHead>
             <TableHead>Quantity</TableHead>
-            <TableHead>Type</TableHead>
+            <TableHead>Unit</TableHead>
             <TableHead>Total Transaction</TableHead>
             <TableHead>Transaction Type</TableHead>
-            <TableHead>Ordering Costs</TableHead>
-            <TableHead>Storage Costs</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -107,8 +106,6 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
               <TableCell>{data.type}</TableCell>
               <TableCell>{transformToCurrency(data.total)}</TableCell>
               <TableCell>{data.transaction}</TableCell>
-              <TableCell>{transformToCurrency(data.orderingCosts)}</TableCell>
-              <TableCell>{transformToCurrency(data.storageCosts)}</TableCell>
               <TableCell className="flex justify-end">
                 <div className="flex gap-3">
                   <EditingDialog
@@ -157,7 +154,7 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
             </TableRow>
           )) || (
             <TableRow>
-              <TableCell colSpan={9} className="text-center" align="center">
+              <TableCell colSpan={7} className="text-center" align="center">
                 No data
               </TableCell>
             </TableRow>
@@ -218,11 +215,6 @@ type EditingDialogProps = {
   open: boolean;
   handleOpen: () => void;
 };
-
-const transactionType = [
-  { value: 'IN', label: 'IN' },
-  { value: 'OUT', label: 'OUT' },
-];
 
 const styles = {
   option: (provided: any, state: any) => ({
@@ -362,10 +354,36 @@ const EditingDialog = ({
               />
             </div>
             <div>
-              <Label className="mb-2">Type</Label>
-              <Input
-                placeholder="Type"
-                {...register('type', { required: true })}
+              <Label className="mb-2">Unit</Label>
+              <Controller
+                control={control}
+                name="type"
+                rules={{ required: true }}
+                render={({ field: { onChange, ref } }) => {
+                  const defaultValue = Units.find(
+                    (c) => c.id === transaction.type
+                  );
+
+                  return (
+                    <Select
+                      ref={ref}
+                      classNamePrefix="select"
+                      // @ts-ignore
+                      options={Units.map((unit) => ({
+                        value: unit.id,
+                        label: unit.name,
+                      }))}
+                      styles={styles}
+                      defaultValue={{
+                        value: defaultValue?.id,
+                        label: defaultValue?.name,
+                      }}
+                      // @ts-ignore
+                      onChange={(val) => onChange(val?.value || '')}
+                      aria-invalid={formState.errors.type ? 'true' : 'false'}
+                    />
+                  );
+                }}
               />
             </div>
             <div>
@@ -374,28 +392,6 @@ const EditingDialog = ({
                 placeholder="Total"
                 type="number"
                 {...register('total', {
-                  required: true,
-                  valueAsNumber: true,
-                })}
-              />
-            </div>
-            <div>
-              <Label className="mb-2">Ordering Costs</Label>
-              <Input
-                placeholder="Ordering Costs"
-                type="number"
-                {...register('orderingCosts', {
-                  required: true,
-                  valueAsNumber: true,
-                })}
-              />
-            </div>
-            <div>
-              <Label className="mb-2">Storage Costs</Label>
-              <Input
-                placeholder="Storage Costs"
-                type="number"
-                {...register('storageCosts', {
                   required: true,
                   valueAsNumber: true,
                 })}

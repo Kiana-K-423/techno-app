@@ -1,0 +1,15 @@
+export const Units = [
+  { name: 'Kg', id: 'Kg' },
+  { name: 'L', id: 'L' },
+  { name: 'Pcs', id: 'Pcs' },
+  { name: 'Pack', id: 'Pack' },
+  { name: 'Box', id: 'Box' },
+  { name: 'Bottle', id: 'Bottle' },
+  { name: 'Can', id: 'Can' },
+  { name: 'Bag', id: 'Bag' },
+  { name: 'Jar', id: 'Jar' },
+  { name: 'Roll', id: 'Roll' },
+  { name: 'Set', id: 'Set' },
+  { name: 'Unit', id: 'Unit' },
+  { name: 'Other', id: 'Other' },
+];

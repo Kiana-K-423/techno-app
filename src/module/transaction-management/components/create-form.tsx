@@ -13,6 +13,7 @@ import {
 } from '@/common/components/elements';
 import { createTransaction } from '@/common/services';
 import { Itemtype, TransactionType } from '@/common/types';
+import { Units } from '@/constant';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -26,11 +27,6 @@ type CreateFormProps = {
   open: boolean;
   handleOpen: () => void;
 };
-
-const transactionType = [
-  { value: 'IN', label: 'IN' },
-  { value: 'OUT', label: 'OUT' },
-];
 
 const styles = {
   option: (provided: any, state: any) => ({
@@ -55,7 +51,7 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
     defaultValues: {
       itemId: '',
       quantity: 0,
-      type: 'kg',
+      type: 'Kg',
       total: 0,
       transaction: 'OUT',
       orderingCosts: 0,
@@ -142,10 +138,27 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
               />
             </div>
             <div>
-              <Label className="mb-2">Type</Label>
-              <Input
-                placeholder="Type"
-                {...register('type', { required: true })}
+              <Label className="mb-2">Unit</Label>
+              <Controller
+                control={control}
+                name="type"
+                rules={{ required: true }}
+                render={({ field: { onChange, value, ref } }) => (
+                  <Select
+                    ref={ref}
+                    classNamePrefix="select"
+                    // @ts-ignore
+                    options={Units.map((unit) => ({
+                      value: unit.id,
+                      label: unit.name,
+                    }))}
+                    styles={styles}
+                    value={{ value, label: value }}
+                    // @ts-ignore
+                    onChange={(val) => onChange(val?.value || '')}
+                    aria-invalid={formState.errors.type ? 'true' : 'false'}
+                  />
+                )}
               />
             </div>
             <div>
@@ -154,28 +167,6 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
                 placeholder="Total"
                 type="number"
                 {...register('total', {
-                  required: true,
-                  valueAsNumber: true,
-                })}
-              />
-            </div>
-            <div>
-              <Label className="mb-2">Ordering Costs</Label>
-              <Input
-                placeholder="Ordering Costs"
-                type="number"
-                {...register('orderingCosts', {
-                  required: true,
-                  valueAsNumber: true,
-                })}
-              />
-            </div>
-            <div>
-              <Label className="mb-2">Storage Costs</Label>
-              <Input
-                placeholder="Storage Costs"
-                type="number"
-                {...register('storageCosts', {
                   required: true,
                   valueAsNumber: true,
                 })}
