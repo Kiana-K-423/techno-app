@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSidebar, useThemeStore } from '@/common/store';
 import { cn } from '@/common/libs';
-import { Search } from 'lucide-react';
-import { SiteLogo } from '@/common/components/svg';
+import SiteLogo from '@public/icon-techno.png';
 import Link from 'next/link';
 import { useMediaQuery } from '@/common/hooks';
+import Image from 'next/image';
 
 const MenuBar = ({
   collapsed,
@@ -69,7 +69,7 @@ const VerticalHeader = () => {
 
   const MainLogo = (
     <Link href="/dashboard" className=" text-primary ">
-      <SiteLogo className="h-7 w-7" />
+      <Image src={SiteLogo} alt="logo" className="h-7 w-7" />
     </Link>
   );
 

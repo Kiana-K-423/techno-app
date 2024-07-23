@@ -1,8 +1,10 @@
 'use client';
 import React from 'react';
 import ThemeCustomize from '../customizer/theme-customizer';
-import { MenuBar, Settings, SiteLogo, DSearch } from '@/common/components/svg';
+import { MenuBar, Settings, DSearch } from '@/common/components/svg';
+import SiteLogo from '@public/icon-techno.png';
 import Link from 'next/link';
+import Image from 'next/image';
 const MobileFooter = ({
   handleOpenSearch,
 }: {
@@ -20,7 +22,11 @@ const MobileFooter = ({
       <div className="relative shadow-[0_-4px_10px_#9595952b] dark:shadow-[0_-4px_10px_#0000004d] bg-card border-t dark:border-none bg-no-repeat backdrop-filter backdrop-blur-[40px] rounded-full footer-bg  h-[70px] w-[70px] z-[-1] -mt-[40px] flex justify-center items-center">
         <div className="rounded-full bg-primary p-3 h-[60px] w-[60px] flex items-center justify-center  relative left-0 top-0 custom-dropshadow  text-center">
           <Link href="/dashboard">
-            <SiteLogo className="h-8 w-8  text-primary-foreground" />
+            <Image
+              src={SiteLogo}
+              alt="logo"
+              className="h-8 w-8  text-primary-foreground"
+            />
           </Link>
         </div>
       </div>

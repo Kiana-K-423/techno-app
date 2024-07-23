@@ -15,7 +15,7 @@ import googleIcon from '@public/images/auth/google.png';
 import facebook from '@public/images/auth/facebook.png';
 import twitter from '@public/images/auth/twitter.png';
 import GithubIcon from '@public/images/auth/github.png';
-import { SiteLogo } from '@/common/components/svg';
+import SiteLogo from '@public/icon-techno.png';
 import { useMediaQuery } from '@/common/hooks';
 
 const schema = z.object({
@@ -66,8 +66,15 @@ export const LogInForm = () => {
   };
   return (
     <div className="w-full">
-      <Link href="/dashboard" className="inline-block">
-        <SiteLogo className="h-10 w-10 2xl:h-14 2xl:w-14 text-primary" />
+      <Link
+        href="/dashboard"
+        className="inline-block w-full items-center justify-center"
+      >
+        <Image
+          src={SiteLogo}
+          alt="logo"
+          className="h-12 w-12 2xl:h-14 2xl:w-14 text-primary"
+        />
       </Link>
       <div className="2xl:mt-8 mt-6 2xl:text-3xl text-2xl font-bold text-default-900">
         Hey, Hello 👋

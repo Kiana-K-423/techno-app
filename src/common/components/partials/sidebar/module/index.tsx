@@ -8,13 +8,14 @@ import MenuItem from './menu-item';
 import NestedMenus from './nested-menus';
 import Link from 'next/link';
 import FooterMenu from './footer-menu';
-import { SiteLogo } from '@/common/components/svg';
+import SiteLogo from '@public/icon-techno.png';
 import { ScrollArea } from '@/common/components/elements';
 import LogoutFooter from './logout-footer';
 import { useMediaQuery } from '@/common/hooks';
 import MenuOverlayPortal from './MenuOverlayPortal';
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/common/components/elements';
+import Image from 'next/image';
 
 const ModuleSidebar = ({ trans }: { trans: any }) => {
   const menus = menusConfig?.sidebarNav?.modern || [];
@@ -154,7 +155,7 @@ const ModuleSidebar = ({ trans }: { trans: any }) => {
         >
           <div className=" pt-4 ">
             <Link href="/dashboard">
-              <SiteLogo className=" mx-auto text-primary h-8 w-8" />
+              <Image src={SiteLogo} alt="logo" className=" mx-auto h-8 w-8" />
             </Link>
           </div>
           {/* end logo */}

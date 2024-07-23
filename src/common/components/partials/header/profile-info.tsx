@@ -12,7 +12,7 @@ import {
 import { Icon } from '@iconify/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import avatar3 from '@public/images/avatar/avatar-3.jpg';
+import SiteLogo from '@public/icon-techno.png';
 import { useEffect, useState } from 'react';
 
 const ProfileInfo = () => {
@@ -36,7 +36,7 @@ const ProfileInfo = () => {
         <div className=" flex items-center  ">
           {profile.email && (
             <Image
-              src={avatar3}
+              src={SiteLogo}
               alt={profile.name ?? ''}
               width={36}
               height={36}
@@ -49,7 +49,7 @@ const ProfileInfo = () => {
         <DropdownMenuLabel className="flex gap-2 items-center mb-1 p-3">
           {profile.email && (
             <Image
-              src={avatar3}
+              src={SiteLogo}
               alt={profile.name ?? ''}
               width={36}
               height={36}
