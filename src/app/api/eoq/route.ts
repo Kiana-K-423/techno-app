@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
         select: {
           transactions: {
             where: {
-              transaction: 'OUT',
+              transaction: 'IN',
               deletedAt: null,
             },
           },
@@ -61,6 +61,8 @@ export async function GET(request: NextRequest) {
       }
     );
   }
+
+  console.log(datas?.map((data) => data.quantity));
 
   const dataWithEOQ = await Promise.all(
     datas.map(async (data) => {
@@ -95,14 +97,15 @@ export async function GET(request: NextRequest) {
           },
           where: {
             itemId: data.id,
-            transaction: 'IN',
+            transaction: 'OUT',
             deletedAt: null,
           },
         })
         .then((res) => res._avg.quantity);
 
       const eoq = Math.sqrt(
-        (2 * (orderingCosts || 0) * (quantity || 0)) / (storageCosts || 1)
+        (2 * (orderingCosts || 0) * ((quantity || 0) * 12)) /
+          (storageCosts || 1)
       );
       return {
         ...data,

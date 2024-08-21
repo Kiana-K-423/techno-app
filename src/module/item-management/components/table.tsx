@@ -55,6 +55,7 @@ export const TableItem = ({
 }: TableItemProps) => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const [selectItem, setSelectItem] = useState<Itemtype | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -119,13 +120,18 @@ export const TableItem = ({
               <TableCell>{transformToCurrency(item.price)}</TableCell>
               <TableCell className="flex justify-end">
                 <div className="flex gap-3">
-                  <EditingDialog
-                    item={item}
-                    rooms={rooms}
-                    categories={categories}
-                    open={open}
-                    handleOpen={handleOpen}
-                  />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    color="secondary"
+                    className=" h-7 w-7"
+                    onClick={() => {
+                      setSelectItem(item);
+                      handleOpen();
+                    }}
+                  >
+                    <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
+                  </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -217,6 +223,15 @@ export const TableItem = ({
           />
         </Button>
       </div>
+      {selectItem && (
+        <EditingDialog
+          item={selectItem as Itemtype}
+          rooms={rooms}
+          categories={categories}
+          open={open}
+          handleOpen={handleOpen}
+        />
+      )}
     </>
   );
 };
@@ -272,6 +287,7 @@ const EditingDialog = ({
       unit: item.unit,
       price: item.price,
     },
+    mode: 'all',
   });
 
   const [image, setImage] = useState<File | string | null>(item.image);
@@ -307,11 +323,13 @@ const EditingDialog = ({
     reset();
     setImage(null);
 
+    console.log('tes');
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [item?.id]);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpen}>
+    <Dialog open={open} onOpenChange={handleOpen} key={item?.name}>
       <DialogTrigger asChild>
         <Button
           size="icon"
