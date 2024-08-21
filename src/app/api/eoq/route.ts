@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
           },
           where: {
             itemId: data.id,
-            transaction: 'OUT',
+            transaction: 'IN',
             deletedAt: null,
           },
         })
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
           },
           where: {
             itemId: data.id,
-            transaction: 'OUT',
+            transaction: 'IN',
             deletedAt: null,
           },
         })
@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
           },
           where: {
             itemId: data.id,
-            transaction: 'OUT',
+            transaction: 'IN',
             deletedAt: null,
           },
         })
