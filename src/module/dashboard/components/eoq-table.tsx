@@ -52,7 +52,7 @@ const EoqTable = ({
             datas?.map((data: EOQType) => (
               <TableRow key={data.id}>
                 <TableCell className=" font-medium">{data?.name}</TableCell>
-                <TableCell>{data?.quantity}</TableCell>
+                <TableCell>{data?._avg?.quantity}</TableCell>
                 <TableCell>
                   {transformToCurrency(data?._avg?.orderingCosts)}
                 </TableCell>

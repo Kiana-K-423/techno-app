@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
           transactions: {
             where: {
               transaction: 'OUT',
+              deletedAt: null,
             },
           },
         },
