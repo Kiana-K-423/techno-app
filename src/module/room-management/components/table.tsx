@@ -44,6 +44,7 @@ type TableItemProps = {
 export const TableItem = ({ rooms, totalPage }: TableItemProps) => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<Room | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -87,11 +88,19 @@ export const TableItem = ({ rooms, totalPage }: TableItemProps) => {
               <TableCell>{room.name}</TableCell>
               <TableCell className="flex justify-end">
                 <div className="flex gap-3">
-                  <EditingDialog
-                    room={room}
-                    open={open}
-                    handleOpen={handleOpen}
-                  />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    color="secondary"
+                    className=" h-7 w-7"
+                    onClick={() => {
+                      setSelected(room);
+                      handleOpen();
+                    }}
+                  >
+                    <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
+                  </Button>
+
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -183,6 +192,9 @@ export const TableItem = ({ rooms, totalPage }: TableItemProps) => {
           />
         </Button>
       </div>
+      {selected && (
+        <EditingDialog room={selected} open={open} handleOpen={handleOpen} />
+      )}
     </>
   );
 };
@@ -199,12 +211,13 @@ const schema = z.object({
 });
 
 const EditingDialog = ({ room, open, handleOpen }: EditingDialogProps) => {
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit, reset, setValue } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       id: room.id,
       name: room.name,
     },
+    mode: 'all',
   });
 
   const queryClient = useQueryClient();
@@ -228,21 +241,14 @@ const EditingDialog = ({ room, open, handleOpen }: EditingDialogProps) => {
   useEffect(() => {
     reset();
 
+    setValue('id', room.id);
+    setValue('name', room.name);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [room?.id]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          color="secondary"
-          className=" h-7 w-7"
-        >
-          <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
-        </Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Room {room.name}</DialogTitle>

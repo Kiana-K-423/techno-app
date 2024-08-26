@@ -46,6 +46,7 @@ type TableItemProps = {
 export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<TransactionType | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -103,12 +104,19 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
               <TableCell>{transformToCurrency(data.storageCosts)}</TableCell>
               <TableCell className="flex justify-end">
                 <div className="flex gap-3">
-                  <EditingDialog
-                    transaction={data}
-                    items={items}
-                    open={open}
-                    handleOpen={handleOpen}
-                  />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    color="secondary"
+                    className=" h-7 w-7"
+                    onClick={() => {
+                      setSelected(data);
+                      handleOpen();
+                    }}
+                  >
+                    <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
+                  </Button>
+
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -200,6 +208,14 @@ export const TableItem = ({ items, datas, totalPage }: TableItemProps) => {
           />
         </Button>
       </div>
+      {selected && (
+        <EditingDialog
+          transaction={selected as TransactionType}
+          items={items}
+          open={open}
+          handleOpen={handleOpen}
+        />
+      )}
     </>
   );
 };
@@ -235,19 +251,21 @@ const EditingDialog = ({
   open,
   handleOpen,
 }: EditingDialogProps) => {
-  const { register, handleSubmit, reset, formState, control } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      id: transaction.id,
-      itemId: transaction.itemId,
-      quantity: transaction.quantity,
-      type: transaction.type,
-      total: transaction.total,
-      transaction: transaction.transaction,
-      orderingCosts: transaction.orderingCosts,
-      storageCosts: transaction.storageCosts,
-    },
-  });
+  const { register, handleSubmit, reset, formState, control, setValue } =
+    useForm({
+      resolver: zodResolver(schema),
+      defaultValues: {
+        id: transaction.id,
+        itemId: transaction.itemId,
+        quantity: transaction.quantity,
+        type: transaction.type,
+        total: transaction.total,
+        transaction: transaction.transaction,
+        orderingCosts: transaction.orderingCosts,
+        storageCosts: transaction.storageCosts,
+      },
+      mode: 'all',
+    });
 
   const queryClient = useQueryClient();
 
@@ -272,21 +290,20 @@ const EditingDialog = ({
   useEffect(() => {
     reset();
 
+    setValue('id', transaction.id);
+    setValue('itemId', transaction.itemId);
+    setValue('quantity', transaction.quantity);
+    setValue('type', transaction.type);
+    setValue('total', transaction.total);
+    setValue('transaction', transaction.transaction);
+    setValue('orderingCosts', transaction.orderingCosts);
+    setValue('storageCosts', transaction.storageCosts);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [transaction?.id]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpen} key={transaction.uuid}>
-      <DialogTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          color="secondary"
-          className=" h-7 w-7"
-        >
-          <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
-        </Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Supply {transaction.uuid}</DialogTitle>

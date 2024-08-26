@@ -276,19 +276,20 @@ const EditingDialog = ({
   open,
   handleOpen,
 }: EditingDialogProps) => {
-  const { register, handleSubmit, reset, formState, control } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      id: item.id,
-      name: item.name,
-      roomId: item.roomId,
-      categoryId: item.categoryId,
-      quantity: item.quantity,
-      unit: item.unit,
-      price: item.price,
-    },
-    mode: 'all',
-  });
+  const { register, handleSubmit, reset, formState, control, setValue } =
+    useForm({
+      resolver: zodResolver(schema),
+      defaultValues: {
+        id: item.id,
+        name: item.name,
+        roomId: item.roomId,
+        categoryId: item.categoryId,
+        quantity: item.quantity,
+        unit: item.unit,
+        price: item.price,
+      },
+      mode: 'all',
+    });
 
   const [image, setImage] = useState<File | string | null>(item.image);
 
@@ -322,8 +323,13 @@ const EditingDialog = ({
   useEffect(() => {
     reset();
     setImage(null);
-
-    console.log('tes');
+    setValue('id', item.id);
+    setValue('name', item.name);
+    setValue('roomId', item.roomId);
+    setValue('categoryId', item.categoryId);
+    setValue('quantity', item.quantity);
+    setValue('unit', item.unit);
+    setValue('price', item.price);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item?.id]);

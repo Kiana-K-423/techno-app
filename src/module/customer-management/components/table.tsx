@@ -47,8 +47,8 @@ type TableItemProps = {
 
 export const TableItem = ({ datas, totalPage }: TableItemProps) => {
   const [open, setOpen] = useState(false);
-  const [editData, setEditData] = useState<CustomerType | null>(null);
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<CustomerType | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -67,9 +67,8 @@ export const TableItem = ({ datas, totalPage }: TableItemProps) => {
     await mutate(id);
   };
 
-  const handleOpen = (data: CustomerType) => {
+  const handleOpen = () => {
     setOpen((prev) => !prev);
-    setEditData(data);
   };
 
   const handlePage = (page: number) => {
@@ -97,11 +96,18 @@ export const TableItem = ({ datas, totalPage }: TableItemProps) => {
               <TableCell>{data.address}</TableCell>
               <TableCell className="flex justify-end">
                 <div className="flex gap-3">
-                  <EditingDialog
-                    data={editData}
-                    open={open}
-                    handleOpen={() => handleOpen(data)}
-                  />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    color="secondary"
+                    className=" h-7 w-7"
+                    onClick={() => {
+                      setSelected(data);
+                      handleOpen();
+                    }}
+                  >
+                    <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
+                  </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -193,6 +199,9 @@ export const TableItem = ({ datas, totalPage }: TableItemProps) => {
           />
         </Button>
       </div>
+      {selected && (
+        <EditingDialog data={selected} open={open} handleOpen={handleOpen} />
+      )}
     </>
   );
 };
@@ -211,7 +220,7 @@ const schema = z.object({
 });
 
 const EditingDialog = ({ data, open, handleOpen }: EditingDialogProps) => {
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit, reset, setValue } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       id: data?.id,
@@ -219,6 +228,7 @@ const EditingDialog = ({ data, open, handleOpen }: EditingDialogProps) => {
       phone: data?.phone,
       address: data?.address,
     },
+    mode: 'all',
   });
 
   const queryClient = useQueryClient();
@@ -241,22 +251,16 @@ const EditingDialog = ({ data, open, handleOpen }: EditingDialogProps) => {
 
   useEffect(() => {
     reset();
+    setValue('id', data?.id);
+    setValue('name', data?.name);
+    setValue('phone', data?.phone);
+    setValue('address', data?.address);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [data?.id]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size="icon"
-          variant="outline"
-          color="secondary"
-          className=" h-7 w-7"
-        >
-          <Icon icon="heroicons:pencil" className=" h-4 w-4  " />
-        </Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Customer {data?.name}</DialogTitle>
