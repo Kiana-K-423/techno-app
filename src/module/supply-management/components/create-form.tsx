@@ -11,10 +11,10 @@ import {
   Input,
   Label,
 } from '@/common/components/elements';
-import { createTransaction } from '@/common/services';
+import { createTransaction, getEOQ } from '@/common/services';
 import { Itemtype, TransactionType } from '@/common/types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -50,7 +50,7 @@ const schema = z.object({
 });
 
 export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
-  const { register, handleSubmit, reset, formState, control } = useForm({
+  const { register, handleSubmit, reset, formState, control, watch } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       itemId: '',
@@ -62,6 +62,7 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
       storageCosts: 0,
       customerId: '',
     },
+    mode: 'all',
   });
 
   const queryClient = useQueryClient();
@@ -75,6 +76,23 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
     onError: () => {
       toast.error('Failed to create transaction');
     },
+  });
+
+  const { data: eoq, isLoading } = useQuery({
+    queryKey: [
+      'eoq-item',
+      {
+        itemId: watch('itemId'),
+        orderingCosts: watch('orderingCosts'),
+        storageCosts: watch('storageCosts'),
+      },
+    ],
+    queryFn: () =>
+      getEOQ({
+        itemId: watch('itemId'),
+        orderingCosts: watch('orderingCosts'),
+        storageCosts: watch('storageCosts'),
+      }),
   });
 
   const onSubmit = async (
@@ -181,6 +199,15 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
                   valueAsNumber: true,
                 })}
               />
+            </div>
+            <div>
+              {isLoading ? (
+                <p>Loading...</p>
+              ) : (
+                <div>
+                  <h1>EOQ: {eoq?.data?.eoq?.toFixed(2)}</h1>
+                </div>
+              )}
             </div>
             <div className="flex justify-end space-x-3">
               <DialogClose asChild>

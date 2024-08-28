@@ -5,6 +5,9 @@ export const getEOQ = async ({
   year = '',
   page = 1,
   limit = 10,
+  itemId = '',
+  orderingCosts = 0,
+  storageCosts = 0,
 }) => {
   const response = await api.get('/eoq', {
     params: {
@@ -12,6 +15,9 @@ export const getEOQ = async ({
       year,
       page,
       limit,
+      itemId,
+      orderingCosts,
+      storageCosts,
     },
   });
   return response.data;
