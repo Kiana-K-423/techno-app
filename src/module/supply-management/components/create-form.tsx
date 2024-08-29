@@ -15,7 +15,7 @@ import { createTransaction, getEOQ } from '@/common/services';
 import { Itemtype, TransactionType } from '@/common/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
@@ -26,11 +26,6 @@ type CreateFormProps = {
   open: boolean;
   handleOpen: () => void;
 };
-
-const transactionType = [
-  { value: 'IN', label: 'IN' },
-  { value: 'OUT', label: 'OUT' },
-];
 
 const styles = {
   option: (provided: any, state: any) => ({
@@ -50,20 +45,22 @@ const schema = z.object({
 });
 
 export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
-  const { register, handleSubmit, reset, formState, control, watch } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      itemId: '',
-      quantity: 0,
-      type: 'kg',
-      total: 0,
-      transaction: 'IN',
-      orderingCosts: 0,
-      storageCosts: 0,
-      customerId: '',
-    },
-    mode: 'all',
-  });
+  const [selectedItem, setSelectedItem] = useState<Itemtype>();
+  const { register, handleSubmit, reset, formState, control, watch, setValue } =
+    useForm({
+      resolver: zodResolver(schema),
+      defaultValues: {
+        itemId: '',
+        quantity: 0,
+        type: 'kg',
+        total: 0,
+        transaction: 'IN',
+        orderingCosts: 0,
+        storageCosts: 0,
+        customerId: '',
+      },
+      mode: 'all',
+    });
 
   const queryClient = useQueryClient();
 
@@ -109,6 +106,14 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(
+    () => {
+      setValue('total', +watch('quantity') * +(selectedItem?.price || 1));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedItem, watch('quantity')]
+  );
+
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
@@ -142,8 +147,12 @@ export const CreateForm = ({ items, handleOpen, open }: CreateFormProps) => {
                     }))}
                     styles={styles}
                     value={items.find((c) => c.name === value)}
-                    // @ts-ignore
-                    onChange={(val) => onChange(val?.value || '')}
+                    onChange={(val) => {
+                      // @ts-ignore
+                      onChange(val?.value || '');
+                      // @ts-ignore
+                      setSelectedItem(items?.find((c) => c.id === val?.value));
+                    }}
                     aria-invalid={formState.errors.itemId ? 'true' : 'false'}
                   />
                 )}

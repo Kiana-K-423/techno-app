@@ -53,22 +53,25 @@ export const CreateForm = ({
   handleOpen,
   open,
 }: CreateFormProps) => {
-  const { register, handleSubmit, reset, formState, control } = useForm({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      itemId: '',
-      customerId: '',
-      quantity: 0,
-      type: 'Kg',
-      total: 0,
-      transaction: 'OUT',
-      orderingCosts: 0,
-      storageCosts: 0,
-      name: '',
-      phone: '',
-      address: '',
-    },
-  });
+  const [selectedItem, setSelectedItem] = useState<Itemtype>();
+  const { register, handleSubmit, reset, formState, control, watch, setValue } =
+    useForm({
+      resolver: zodResolver(schema),
+      defaultValues: {
+        itemId: '',
+        customerId: '',
+        quantity: 0,
+        type: 'Kg',
+        total: 0,
+        transaction: 'OUT',
+        orderingCosts: 0,
+        storageCosts: 0,
+        name: '',
+        phone: '',
+        address: '',
+      },
+      mode: 'all',
+    });
   const [isNewCustomer, setIsNewCustomer] = useState(false);
 
   const queryClient = useQueryClient();
@@ -97,6 +100,14 @@ export const CreateForm = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(
+    () => {
+      setValue('total', +watch('quantity') * +(selectedItem?.price || 1));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedItem, watch('quantity')]
+  );
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
@@ -131,8 +142,12 @@ export const CreateForm = ({
                     }))}
                     styles={styles}
                     value={items.find((c) => c.name === value)}
-                    // @ts-ignore
-                    onChange={(val) => onChange(val?.value || '')}
+                    onChange={(val) => {
+                      // @ts-ignore
+                      onChange(val?.value || '');
+                      // @ts-ignore
+                      setSelectedItem(items.find((c) => c.id === val?.value));
+                    }}
                     aria-invalid={formState.errors.itemId ? 'true' : 'false'}
                   />
                 )}
