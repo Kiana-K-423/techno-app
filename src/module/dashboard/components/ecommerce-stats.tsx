@@ -20,19 +20,19 @@ const EcommerceStats = ({ dashboard, isFetching }: EcommerceStatsProps) => {
       icon: <CupBar className="w-3.5 h-3.5" />,
     },
     {
-      text: 'Total Supply',
+      text: 'Total Customers',
       total: dashboard?.supplys || 0,
       color: 'warning',
       icon: <NoteIcon className="w-3.5 h-3.5" />,
     },
     {
-      text: 'Total Transaction',
-      total: dashboard?.transactions || 0,
+      text: 'Supply',
+      total: transformToCurrency(dashboard?.transactions) || 0,
       color: 'success',
       icon: <CheckShape className="w-3.5 h-3.5" />,
     },
     {
-      text: 'Total',
+      text: 'Transactions',
       total: transformToCurrency(dashboard?.total) || 0,
       color: 'destructive',
       icon: <Spam className="w-3.5 h-3.5" />,

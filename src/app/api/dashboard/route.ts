@@ -27,24 +27,26 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const supplys = await prisma.transaction.count({
+  const supplys = await prisma.customer.count({
+    where: {
+      createdAt: {
+        gte: new Date(from),
+        lte: new Date(to),
+      },
+      deletedAt: null,
+    },
+  });
+
+  const transactions = await prisma.transaction.aggregate({
+    _sum: {
+      total: true,
+    },
     where: {
       createdAt: {
         gte: new Date(from),
         lte: new Date(to),
       },
       transaction: 'IN',
-      deletedAt: null,
-    },
-  });
-
-  const transactions = await prisma.transaction.count({
-    where: {
-      createdAt: {
-        gte: new Date(from),
-        lte: new Date(to),
-      },
-      transaction: 'OUT',
       deletedAt: null,
     },
   });
@@ -58,6 +60,7 @@ export async function GET(request: NextRequest) {
         gte: new Date(from),
         lte: new Date(to),
       },
+      transaction: 'OUT',
       deletedAt: null,
     },
   });
@@ -67,7 +70,7 @@ export async function GET(request: NextRequest) {
       data: {
         items,
         supplys,
-        transactions,
+        transactions: transactions._sum.total,
         total: total._sum.total,
       },
       message: 'Data found',
