@@ -104,10 +104,9 @@ export async function POST(request: NextRequest) {
   const price = body.get('price');
   const unit = body.get('unit');
   const categoryId = body.get('categoryId');
-  const roomId = body.get('roomId');
   const image = body.get('image');
 
-  if (!name || !quantity || !price || !unit || !categoryId || !roomId) {
+  if (!name || !quantity || !price || !unit || !categoryId) {
     return new Response(
       JSON.stringify({ message: 'All fields are required' }),
       {
@@ -115,32 +114,32 @@ export async function POST(request: NextRequest) {
       }
     );
   }
+  let filename = '';
 
-  if (!image) {
-    return new Response(JSON.stringify({ message: 'Image is required' }), {
-      status: 400,
-    });
-  }
+  if (image) {
+    // @ts-ignore
+    const buffer = Buffer.from(await image?.arrayBuffer());
+    filename = `item-${Date.now()}.jpg`;
 
-  // @ts-ignore
-  const buffer = Buffer.from(await image?.arrayBuffer());
-  const filename = `item-${Date.now()}.jpg`;
-
-  try {
-    await writeFile(`public/images/items/${filename}`, buffer, (err) => {
-      if (err) {
-        return new Response(
-          JSON.stringify({ message: 'Failed to upload image' }),
-          {
-            status: 500,
-          }
-        );
-      }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ message: 'Failed to upload image' }), {
-      status: 500,
-    });
+    try {
+      await writeFile(`public/images/items/${filename}`, buffer, (err) => {
+        if (err) {
+          return new Response(
+            JSON.stringify({ message: 'Failed to upload image' }),
+            {
+              status: 500,
+            }
+          );
+        }
+      });
+    } catch (error) {
+      return new Response(
+        JSON.stringify({ message: 'Failed to upload image' }),
+        {
+          status: 500,
+        }
+      );
+    }
   }
 
   const data = await prisma.item.create({
@@ -150,7 +149,7 @@ export async function POST(request: NextRequest) {
       price: +price,
       unit: String(unit),
       categoryId: String(categoryId),
-      roomId: String(roomId),
+      roomId: String('cf38281a-02c5-4342-be95-9073b3a8df64'),
       image: filename || '/images/avatar/avatar-9.jpg',
     },
   });
@@ -169,7 +168,6 @@ export async function PUT(request: NextRequest) {
   const price = body.get('price');
   const unit = body.get('unit');
   const categoryId = body.get('categoryId');
-  const roomId = body.get('roomId');
   const image = body.get('image');
 
   if (!id) {
@@ -257,7 +255,7 @@ export async function PUT(request: NextRequest) {
       price: +Number(price) || +exist?.price,
       unit: String(unit) || exist?.unit,
       categoryId: String(categoryId) || exist?.categoryId,
-      roomId: String(roomId) || exist?.roomId,
+      roomId: exist?.roomId,
       image: filename || exist?.image,
     },
   });

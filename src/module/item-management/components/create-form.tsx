@@ -121,7 +121,7 @@ export const CreateForm = ({ rooms, categories }: CreateFormProps) => {
                 })}
               />
             </div>
-            <div>
+            {/* <div>
               <Label className="mb-2">Room</Label>
               <Controller
                 control={control}
@@ -144,7 +144,7 @@ export const CreateForm = ({ rooms, categories }: CreateFormProps) => {
                   />
                 )}
               />
-            </div>
+            </div> */}
             <div>
               <Label className="mb-2">Category</Label>
               <Controller
@@ -214,7 +214,7 @@ export const CreateForm = ({ rooms, categories }: CreateFormProps) => {
                 aria-invalid={formState.errors.price ? 'true' : 'false'}
               />
             </div>
-            <div>
+            {/* <div>
               <Label className="mb-2">Image</Label>
               <Input
                 type="file"
@@ -225,7 +225,7 @@ export const CreateForm = ({ rooms, categories }: CreateFormProps) => {
                   }
                 }}
               />
-            </div>
+            </div> */}
             <div className="flex justify-end space-x-3">
               <DialogClose asChild>
                 <Button type="button" variant="outline" color="destructive">

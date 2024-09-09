@@ -31,11 +31,11 @@ export const menusConfig = {
       icon: Grid,
       href: '/dashboard/item',
     },
-    {
-      title: 'Room',
-      icon: Heroicon,
-      href: '/dashboard/room',
-    },
+    // {
+    //   title: 'Room',
+    //   icon: Heroicon,
+    //   href: '/dashboard/room',
+    // },
     {
       title: 'Category',
       icon: Components,
@@ -69,11 +69,11 @@ export const menusConfig = {
         icon: Grid,
         href: '/dashboard/item',
       },
-      {
-        title: 'Room',
-        icon: Heroicon,
-        href: '/dashboard/room',
-      },
+      // {
+      //   title: 'Room',
+      //   icon: Heroicon,
+      //   href: '/dashboard/room',
+      // },
       {
         title: 'Category',
         icon: Components,
@@ -114,11 +114,11 @@ export const menusConfig = {
         icon: Grid,
         href: '/dashboard/item',
       },
-      {
-        title: 'Room',
-        icon: Heroicon,
-        href: '/dashboard/room',
-      },
+      // {
+      //   title: 'Room',
+      //   icon: Heroicon,
+      //   href: '/dashboard/room',
+      // },
       {
         title: 'Category',
         icon: Components,

@@ -90,7 +90,7 @@ export const TableItem = ({
         <TableHeader>
           <TableRow>
             <TableHead className="font-semibold">Item</TableHead>
-            <TableHead> Room</TableHead>
+            {/* <TableHead> Room</TableHead> */}
             <TableHead>Category</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Unit</TableHead>
@@ -113,7 +113,7 @@ export const TableItem = ({
                 </div>
               </TableCell>
 
-              <TableCell>{item.room?.name}</TableCell>
+              {/* <TableCell>{item.room?.name}</TableCell> */}
               <TableCell>{item.category?.name}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>{item.unit}</TableCell>
@@ -369,7 +369,7 @@ const EditingDialog = ({
                 })}
               />
             </div>
-            <div>
+            {/* <div>
               <Label className="mb-2">Room</Label>
               <Controller
                 control={control}
@@ -397,7 +397,7 @@ const EditingDialog = ({
                   );
                 }}
               />
-            </div>
+            </div> */}
             <div>
               <Label className="mb-2">Category</Label>
               <Controller
@@ -474,7 +474,7 @@ const EditingDialog = ({
                 aria-invalid={formState.errors.price ? 'true' : 'false'}
               />
             </div>
-            <div>
+            {/* <div>
               <Label className="mb-2">Image</Label>
               <Input
                 type="file"
@@ -485,7 +485,7 @@ const EditingDialog = ({
                   }
                 }}
               />
-            </div>
+            </div> */}
             <div className="flex justify-end space-x-3">
               <DialogClose asChild>
                 <Button type="button" variant="outline" color="destructive">
