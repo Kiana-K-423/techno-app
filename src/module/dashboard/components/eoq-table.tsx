@@ -88,10 +88,10 @@ const EoqTable = ({
           />
         </Button>
         <ul className=" flex space-x-3 rtl:space-x-reverse items-center">
-          {pageNumber.map((page, pageIndex) => (
+          {pageNumber.map((val, pageIndex) => (
             <li key={pageIndex}>
               <Button
-                onClick={() => handlePage(page)}
+                onClick={() => handlePage(val)}
                 aria-current="page"
                 className={cn(
                   'h-7 w-7 bg-default-100 text-default-600 p-0 hover:bg-opacity-70 hover:text-primary-foreground',
@@ -101,7 +101,7 @@ const EoqTable = ({
                   }
                 )}
               >
-                {page}
+                {val}
               </Button>
             </li>
           ))}

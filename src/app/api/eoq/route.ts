@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     const datas = await prisma.item.findMany({
       include: {
         // @ts-ignore
-        deletedAt: false,
+        deletedAt: null,
         category: {
           // @ts-ignore
           select: {
@@ -76,6 +76,12 @@ export async function GET(request: NextRequest) {
       },
       where: {
         deletedAt: null,
+        category: {
+          deletedAt: null,
+        },
+        room: {
+          deletedAt: null,
+        },
       },
       orderBy: {
         id: 'asc',
@@ -100,14 +106,14 @@ export async function GET(request: NextRequest) {
     }
 
     const dataWithEOQ = await Promise.all(
-      datas.map(async (data) => {
+      datas?.map(async (data) => {
         const orderingCosts = await prisma.transaction
           .aggregate({
             _avg: {
               orderingCosts: true,
             },
             where: {
-              itemId: data.id,
+              itemId: data?.id,
               transaction: 'IN',
               deletedAt: null,
             },
@@ -119,7 +125,7 @@ export async function GET(request: NextRequest) {
               storageCosts: true,
             },
             where: {
-              itemId: data.id,
+              itemId: data?.id,
               transaction: 'IN',
               deletedAt: null,
             },
@@ -131,7 +137,7 @@ export async function GET(request: NextRequest) {
               quantity: true,
             },
             where: {
-              itemId: data.id,
+              itemId: data?.id,
               transaction: 'OUT',
               deletedAt: null,
             },
