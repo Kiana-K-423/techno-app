@@ -84,60 +84,63 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const dataWithEOQ = await Promise.all(
-      datas?.map(async (data) => {
-        const orderingCosts = await prisma.transaction
-          .aggregate({
-            _avg: {
-              orderingCosts: true,
-            },
-            where: {
-              itemId: data?.id,
-              transaction: 'IN',
-              deletedAt: null,
-            },
-          })
-          .then((res) => res._avg.orderingCosts);
-        const storageCosts = await prisma.transaction
-          .aggregate({
-            _avg: {
-              storageCosts: true,
-            },
-            where: {
-              itemId: data?.id,
-              transaction: 'IN',
-              deletedAt: null,
-            },
-          })
-          .then((res) => res._avg.storageCosts);
-        const quantity = await prisma.transaction
-          .aggregate({
-            _avg: {
-              quantity: true,
-            },
-            where: {
-              itemId: data?.id,
-              transaction: 'OUT',
-              deletedAt: null,
-            },
-          })
-          .then((res) => res._avg.quantity);
-
-        const eoq = Math.sqrt(
-          (2 * (orderingCosts || 0) * ((quantity || 0) * 12)) /
-            (storageCosts || 1)
-        );
-        return {
-          ...data,
+    let dataWithEOQ: any[] = [];
+    const prosesData = async (data: any) => {
+      const orderingCosts = await prisma.transaction
+        .aggregate({
           _avg: {
-            orderingCosts,
-            storageCosts,
-            quantity,
+            orderingCosts: true,
           },
-          eoq,
-        };
-      })
-    );
+          where: {
+            itemId: data?.id,
+            transaction: 'IN',
+            deletedAt: null,
+          },
+        })
+        .then((res) => res._avg.orderingCosts);
+      const storageCosts = await prisma.transaction
+        .aggregate({
+          _avg: {
+            storageCosts: true,
+          },
+          where: {
+            itemId: data?.id,
+            transaction: 'IN',
+            deletedAt: null,
+          },
+        })
+        .then((res) => res._avg.storageCosts);
+      const quantity = await prisma.transaction
+        .aggregate({
+          _avg: {
+            quantity: true,
+          },
+          where: {
+            itemId: data?.id,
+            transaction: 'OUT',
+            deletedAt: null,
+          },
+        })
+        .then((res) => res._avg.quantity);
+
+      const eoq = Math.sqrt(
+        (2 * (orderingCosts || 0) * ((quantity || 0) * 12)) /
+          (storageCosts || 1)
+      );
+      dataWithEOQ.push({
+        ...data,
+        _avg: {
+          orderingCosts,
+          storageCosts,
+          quantity,
+        },
+        eoq,
+      });
+    };
+
+    for (const data of datas) {
+      await prosesData(data);
+    }
 
     return new Response(
       JSON.stringify({
