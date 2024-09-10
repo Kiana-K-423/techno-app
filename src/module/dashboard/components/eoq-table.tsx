@@ -88,7 +88,7 @@ const EoqTable = ({
           />
         </Button>
         <ul className=" flex space-x-3 rtl:space-x-reverse items-center">
-          {pageNumber.map((val, pageIndex) => (
+          {pageNumber?.map((val, pageIndex) => (
             <li key={pageIndex}>
               <Button
                 onClick={() => handlePage(val)}
