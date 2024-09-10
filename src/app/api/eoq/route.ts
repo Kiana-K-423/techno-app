@@ -5,9 +5,9 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const page = searchParams.get('page') || 1;
   const limit = searchParams.get('limit') || 10;
-  const itemId = searchParams?.get('itemId') || '';
+  const itemId = searchParams.get('itemId');
 
-  if (itemId !== '' || itemId !== null) {
+  if (itemId) {
     const orderingCosts = searchParams.get('orderingCosts') || 0;
     const storageCosts = searchParams.get('storageCosts') || 0;
 
@@ -84,12 +84,7 @@ export async function GET(request: NextRequest) {
 
     if (!datas || datas.length === 0) {
       return new Response(
-        JSON.stringify({
-          message: 'Data not found',
-          data: null,
-          totalData: 0,
-          totalPage: 0,
-        }),
+        JSON.stringify({ message: 'Data not found', data: null }),
         {
           status: 404,
         }
@@ -154,8 +149,8 @@ export async function GET(request: NextRequest) {
     return new Response(
       JSON.stringify({
         data: dataWithEOQ,
-        totalData: count || 0,
-        totalPage: Math.ceil(count / (limit as number)) || 0,
+        totalData: count,
+        totalPage: Math.ceil(count / (limit as number)),
         message: 'Data found',
       }),
       {

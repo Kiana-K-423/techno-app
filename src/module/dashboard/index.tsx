@@ -46,11 +46,9 @@ const Dashboard = ({ trans }: DashboardProps) => {
   });
 
   const { data: eoq, isLoading } = useQuery({
-    queryKey: ['eoq', { month: '', year: '', page: page }],
+    queryKey: ['eoq', { page: page }],
     queryFn: () =>
       getEOQ({
-        month: '',
-        year: '',
         page: page,
         limit: 10,
       }),
