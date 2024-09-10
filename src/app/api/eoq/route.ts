@@ -84,7 +84,12 @@ export async function GET(request: NextRequest) {
 
     if (!datas || datas.length === 0) {
       return new Response(
-        JSON.stringify({ message: 'Data not found', data: null }),
+        JSON.stringify({
+          message: 'Data not found',
+          data: null,
+          totalData: 0,
+          totalPage: 0,
+        }),
         {
           status: 404,
         }
