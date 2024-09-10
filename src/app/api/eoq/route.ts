@@ -48,7 +48,6 @@ export async function GET(request: NextRequest) {
     const datas = await prisma.item.findMany({
       include: {
         // @ts-ignore
-        deletedAt: null,
         _count: {
           select: {
             transactions: {
