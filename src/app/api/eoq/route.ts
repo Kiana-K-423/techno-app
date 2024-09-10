@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const page = searchParams.get('page') || 1;
   const limit = searchParams.get('limit') || 10;
-  const itemId = searchParams.get('itemId');
+  const itemId = searchParams.get('itemId') || '';
 
   if (itemId) {
     const orderingCosts = searchParams.get('orderingCosts') || 0;
@@ -61,12 +61,6 @@ export async function GET(request: NextRequest) {
       },
       where: {
         deletedAt: null,
-        category: {
-          deletedAt: null,
-        },
-        room: {
-          deletedAt: null,
-        },
       },
       orderBy: {
         id: 'asc',
