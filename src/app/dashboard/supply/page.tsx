@@ -22,6 +22,7 @@ const SupplyPage = () => {
   const [filterItem, setFilterItem] = useState('All Item');
   const [search, setSearch] = useState('');
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [page, setPage] = useState(1);
 
   const { data: items } = useQuery({
     queryKey: ['items'],
@@ -29,9 +30,9 @@ const SupplyPage = () => {
   });
 
   const { data: transactions } = useQuery({
-    queryKey: ['transactions-in', { sort, search, filterItem }],
+    queryKey: ['transactions-in', { sort, search, filterItem, page }],
     queryFn: () =>
-      getTransactions({ sort, itemId: filterItem, search, type: 'IN' }),
+      getTransactions({ sort, itemId: filterItem, search, type: 'IN', page }),
   });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +95,8 @@ const SupplyPage = () => {
         items={items?.data || []}
         datas={transactions?.data || []}
         totalPage={transactions?.totalPage || 0}
+        page={page}
+        setPage={setPage}
       />
     </CardSnippet>
   );

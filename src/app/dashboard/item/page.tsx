@@ -22,6 +22,7 @@ const ItemPage = () => {
   const [sort, setSort] = useState('asc');
   const [filterRoom, setFilterRoom] = useState('All Room');
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   const { data: rooms } = useQuery({
     queryKey: ['rooms'],
@@ -29,8 +30,8 @@ const ItemPage = () => {
   });
 
   const { data: items } = useQuery({
-    queryKey: ['items', { sort, search, filterRoom }],
-    queryFn: () => getItems({ sort, roomId: filterRoom, search }),
+    queryKey: ['items', { sort, search, filterRoom, page }],
+    queryFn: () => getItems({ sort, roomId: filterRoom, search, page }),
   });
 
   const { data: categories } = useQuery({
@@ -58,20 +59,6 @@ const ItemPage = () => {
             </SelectContent>
           </Select>
 
-          <Select onValueChange={(v) => setFilterRoom(v)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Rooms" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All Room">All Room</SelectItem>
-              {rooms?.data.map((room: Room) => (
-                <SelectItem key={room.id} value={room.id}>
-                  {room.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
           <div className="relative w-full">
             <Search className="w-4 h-4 text-default-400 absolute top-1/2 left-2 -translate-y-1/2" />
             <Input
@@ -94,6 +81,8 @@ const ItemPage = () => {
         rooms={rooms?.data || []}
         categories={categories?.data || []}
         totalPage={items?.totalPage || 0}
+        page={page}
+        setPage={setPage}
       />
     </CardSnippet>
   );

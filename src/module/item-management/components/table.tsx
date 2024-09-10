@@ -45,6 +45,8 @@ type TableItemProps = {
   rooms: Room[];
   categories: CategoryType[];
   totalPage: number;
+  page: number;
+  setPage: (page: number) => void;
 };
 
 export const TableItem = ({
@@ -52,10 +54,13 @@ export const TableItem = ({
   categories,
   rooms,
   totalPage,
+  page,
+  setPage,
 }: TableItemProps) => {
   const [open, setOpen] = useState(false);
-  const [page, setPage] = useState(1);
   const [selectItem, setSelectItem] = useState<Itemtype | null>(null);
+
+  console.log('page ', page);
 
   const queryClient = useQueryClient();
 
@@ -192,10 +197,10 @@ export const TableItem = ({
           />
         </Button>
         <ul className=" flex space-x-3 rtl:space-x-reverse items-center">
-          {pageNumber.map((page, pageIndex) => (
+          {pageNumber.map((val, pageIndex) => (
             <li key={pageIndex}>
               <Button
-                onClick={() => handlePage(page)}
+                onClick={() => handlePage(val)}
                 aria-current="page"
                 className={cn(
                   'h-7 w-7 bg-default-100 text-default-600 p-0 hover:bg-opacity-70 hover:text-primary-foreground',
@@ -205,7 +210,7 @@ export const TableItem = ({
                   }
                 )}
               >
-                {page}
+                {val}
               </Button>
             </li>
           ))}
@@ -249,6 +254,11 @@ const units = [
   { value: 'g', label: 'Gram' },
   { value: 'l', label: 'Liter' },
   { value: 'ml', label: 'Milliliter' },
+  { value: 'm', label: 'Meter' },
+  { value: 'cm', label: 'Centimeter' },
+  { value: 'mm', label: 'Millimeter' },
+  { value: 'ft', label: 'Feet' },
+  { value: 'inch', label: 'Inch' },
   { value: 'pcs', label: 'Pieces' },
 ];
 

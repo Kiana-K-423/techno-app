@@ -21,10 +21,11 @@ const CustomerPage = () => {
   const [sort, setSort] = useState('asc');
   const [search, setSearch] = useState('');
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [page, setPage] = useState(1);
 
   const { data: customers } = useQuery({
-    queryKey: ['customers', { sort, search }],
-    queryFn: () => getCustomers({ sort, search }),
+    queryKey: ['customers', { sort, search, page }],
+    queryFn: () => getCustomers({ sort, search, page }),
   });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +69,8 @@ const CustomerPage = () => {
       <TableItem
         datas={customers?.data || []}
         totalPage={customers?.totalPage || 0}
+        page={page}
+        setPage={setPage}
       />
     </CardSnippet>
   );

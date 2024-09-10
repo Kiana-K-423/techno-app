@@ -31,6 +31,11 @@ const units = [
   { value: 'g', label: 'Gram' },
   { value: 'l', label: 'Liter' },
   { value: 'ml', label: 'Milliliter' },
+  { value: 'm', label: 'Meter' },
+  { value: 'cm', label: 'Centimeter' },
+  { value: 'mm', label: 'Millimeter' },
+  { value: 'ft', label: 'Feet' },
+  { value: 'inch', label: 'Inch' },
   { value: 'pcs', label: 'Pieces' },
 ];
 

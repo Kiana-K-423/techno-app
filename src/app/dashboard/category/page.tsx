@@ -21,10 +21,11 @@ const CategoryPage = () => {
   const [sort, setSort] = useState('asc');
   const [search, setSearch] = useState('');
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [page, setPage] = useState(1);
 
   const { data: categories } = useQuery({
-    queryKey: ['categories', { sort, search }],
-    queryFn: () => getCategorys({ sort, search }),
+    queryKey: ['categories', { sort, search, page }],
+    queryFn: () => getCategorys({ sort, search, page }),
   });
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,6 +69,8 @@ const CategoryPage = () => {
       <TableItem
         datas={categories?.data || []}
         totalPage={categories?.totalPage || 0}
+        page={page}
+        setPage={setPage}
       />
     </CardSnippet>
   );

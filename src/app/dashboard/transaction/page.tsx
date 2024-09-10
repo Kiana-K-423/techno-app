@@ -22,6 +22,7 @@ const TransactionPage = () => {
   const [filterItem, setFilterItem] = useState('All Item');
   const [search, setSearch] = useState('');
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [page, setPage] = useState(1);
 
   const { data: items } = useQuery({
     queryKey: ['items'],
@@ -29,9 +30,9 @@ const TransactionPage = () => {
   });
 
   const { data: transactions } = useQuery({
-    queryKey: ['transaction-out', { sort, search, filterItem }],
+    queryKey: ['transaction-out', { sort, search, filterItem, page }],
     queryFn: () =>
-      getTransactions({ sort, itemId: filterItem, search, type: 'OUT' }),
+      getTransactions({ sort, itemId: filterItem, search, type: 'OUT', page }),
   });
 
   const { data: customers } = useQuery({
@@ -101,6 +102,8 @@ const TransactionPage = () => {
         datas={transactions?.data || []}
         customers={customers?.data || []}
         totalPage={transactions?.totalPage || 0}
+        page={page}
+        setPage={setPage}
       />
     </CardSnippet>
   );
