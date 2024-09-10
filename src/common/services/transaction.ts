@@ -23,7 +23,11 @@ export const getTransactions = async ({
 };
 
 export const createTransaction = async (
-  data: Omit<TransactionType, 'id' | 'createdAt' | 'uuid'>
+  data: Omit<TransactionType, 'id' | 'createdAt' | 'uuid'> & {
+    name: string;
+    phone: string;
+    address: string;
+  }
 ) => {
   const response = await api.post('/transaction', data);
   return response.data;

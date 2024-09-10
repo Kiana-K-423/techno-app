@@ -45,6 +45,9 @@ const schema = z.object({
   transaction: z.enum(['IN', 'OUT']),
   orderingCosts: z.number(),
   storageCosts: z.number(),
+  name: z.string().optional(),
+  phone: z.string().optional(),
+  address: z.string().optional(),
 });
 
 export const CreateForm = ({
@@ -88,7 +91,11 @@ export const CreateForm = ({
   });
 
   const onSubmit = async (
-    data: Omit<TransactionType, 'id' | 'uuid' | 'createdAt'>
+    data: Omit<TransactionType, 'id' | 'uuid' | 'createdAt'> & {
+      name: string;
+      phone: string;
+      address: string;
+    }
   ) => {
     await mutate(data as any);
     handleOpen();

@@ -369,22 +369,31 @@ const EditingDialog = ({
                 control={control}
                 name="customerId"
                 rules={{ required: true }}
-                render={({ field: { onChange, value, ref } }) => (
-                  <Select
-                    ref={ref}
-                    classNamePrefix="select"
-                    // @ts-ignore
-                    options={customers.map((item) => ({
-                      value: item.id,
-                      label: item.name,
-                    }))}
-                    styles={styles}
-                    value={customers.find((c) => c.name === value)}
-                    // @ts-ignore
-                    onChange={(val) => onChange(val?.value || '')}
-                    aria-invalid={formState.errors.itemId ? 'true' : 'false'}
-                  />
-                )}
+                render={({ field: { onChange, value, ref } }) => {
+                  const defaultValue = customers.find(
+                    (c) => c.id === transaction.customerId
+                  );
+
+                  return (
+                    <Select
+                      ref={ref}
+                      classNamePrefix="select"
+                      // @ts-ignore
+                      options={customers.map((item) => ({
+                        value: item.id,
+                        label: item.name,
+                      }))}
+                      styles={styles}
+                      defaultValue={{
+                        value: defaultValue?.id,
+                        label: defaultValue?.name,
+                      }}
+                      // @ts-ignore
+                      onChange={(val) => onChange(val?.value || '')}
+                      aria-invalid={formState.errors.itemId ? 'true' : 'false'}
+                    />
+                  );
+                }}
               />
             </div>
             <div>

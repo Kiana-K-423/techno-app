@@ -140,6 +140,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let customerId = body.customerId;
+  if (body.name) {
+    const customer = await prisma.customer.create({
+      data: {
+        name: body.name,
+        phone: body.phone,
+        address: body.address,
+      },
+    });
+
+    customerId = customer.id;
+  }
+
   // generate uuid
   const lastData = await prisma.transaction.findFirst({
     orderBy: {
@@ -156,7 +169,7 @@ export async function POST(request: NextRequest) {
       data: {
         uuid: uuid,
         itemId: String(body.itemId),
-        customerId: body.customerId ? String(body.customerId) : null,
+        customerId: customerId,
         quantity: +Number(body.quantity),
         total: +Number(body.total),
         transaction: body.transaction as TransactionType,

@@ -122,6 +122,7 @@ export async function POST(request: NextRequest) {
     filename = `item-${Date.now()}.jpg`;
 
     try {
+      // @ts-ignore
       await writeFile(`public/images/items/${filename}`, buffer, (err) => {
         if (err) {
           return new Response(
@@ -201,6 +202,7 @@ export async function PUT(request: NextRequest) {
     try {
       await writeFile(
         `public/images/items/${filename}`,
+        // @ts-ignore
         buffer,
         async (err) => {
           if (err) {
