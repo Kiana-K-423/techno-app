@@ -5,9 +5,9 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const page = searchParams.get('page') || 1;
   const limit = searchParams.get('limit') || 10;
-  const itemId = searchParams.get('itemId');
+  const itemId = searchParams?.get('itemId') || '';
 
-  if (itemId) {
+  if (itemId !== '' || itemId !== null) {
     const orderingCosts = searchParams.get('orderingCosts') || 0;
     const storageCosts = searchParams.get('storageCosts') || 0;
 
