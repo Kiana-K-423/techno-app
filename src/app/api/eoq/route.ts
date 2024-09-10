@@ -49,20 +49,6 @@ export async function GET(request: NextRequest) {
       include: {
         // @ts-ignore
         deletedAt: null,
-        category: {
-          // @ts-ignore
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        room: {
-          // @ts-ignore
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         _count: {
           select: {
             transactions: {
