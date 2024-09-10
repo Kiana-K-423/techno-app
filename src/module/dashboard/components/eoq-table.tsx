@@ -30,7 +30,7 @@ const EoqTable = ({
   page,
   totalPage,
 }: EoqTableProps) => {
-  const pageNumber = generatePageNumbers(totalPage, page);
+  const pageNumber = totalPage ? generatePageNumbers(totalPage, page) : [];
   return (
     <>
       <Table>
