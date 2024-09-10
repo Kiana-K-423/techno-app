@@ -154,8 +154,8 @@ export async function GET(request: NextRequest) {
     return new Response(
       JSON.stringify({
         data: dataWithEOQ,
-        totalData: count,
-        totalPage: Math.ceil(count / (limit as number)),
+        totalData: count || 0,
+        totalPage: Math.ceil(count / (limit as number)) || 0,
         message: 'Data found',
       }),
       {
