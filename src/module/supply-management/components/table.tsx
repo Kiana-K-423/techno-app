@@ -366,9 +366,11 @@ const EditingDialog = ({
               <Input
                 placeholder="Quantity"
                 type="number"
+                min={1}
                 {...register('quantity', {
                   required: true,
                   valueAsNumber: true,
+                  min: 1,
                 })}
               />
             </div>
@@ -384,9 +386,11 @@ const EditingDialog = ({
               <Input
                 placeholder="Total"
                 type="number"
+                min={0}
                 {...register('total', {
                   required: true,
                   valueAsNumber: true,
+                  min: 0,
                 })}
               />
             </div>
@@ -395,9 +399,11 @@ const EditingDialog = ({
               <Input
                 placeholder="Ordering Costs"
                 type="number"
+                min={0}
                 {...register('orderingCosts', {
                   required: true,
                   valueAsNumber: true,
+                  min: 0,
                 })}
               />
             </div>
@@ -406,9 +412,11 @@ const EditingDialog = ({
               <Input
                 placeholder="Storage Costs"
                 type="number"
+                min={0}
                 {...register('storageCosts', {
                   required: true,
                   valueAsNumber: true,
+                  min: 0,
                 })}
               />
             </div>

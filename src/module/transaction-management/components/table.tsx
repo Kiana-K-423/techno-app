@@ -404,9 +404,12 @@ const EditingDialog = ({
               <Input
                 placeholder="Quantity"
                 type="number"
+                min={1}
+                max={items.find((c) => c.id === transaction.itemId)?.quantity}
                 {...register('quantity', {
                   required: true,
                   valueAsNumber: true,
+                  min: 1,
                 })}
               />
             </div>
@@ -448,9 +451,11 @@ const EditingDialog = ({
               <Input
                 placeholder="Total"
                 type="number"
+                min={0}
                 {...register('total', {
                   required: true,
                   valueAsNumber: true,
+                  min: 0,
                 })}
               />
             </div>

@@ -170,11 +170,12 @@ export async function POST(request: NextRequest) {
         uuid: uuid,
         itemId: String(body.itemId),
         customerId: customerId,
-        quantity: +Number(body.quantity),
-        total: +Number(body.total),
+        quantity: +body.quantity < 0 ? 0 : +Number(body.quantity),
+        total: +body.total < 0 ? 0 : +Number(body.total),
         transaction: body.transaction as TransactionType,
-        orderingCosts: +Number(body.orderingCosts),
-        storageCosts: +Number(body.storageCosts),
+        orderingCosts:
+          +body.orderingCosts < 0 ? 0 : +Number(body.orderingCosts),
+        storageCosts: +body.storageCosts < 0 ? 0 : +Number(body.storageCosts),
         type: String(body.type),
       },
     }),
@@ -240,12 +241,18 @@ export async function PUT(request: NextRequest) {
       itemId: itemId ? String(itemId) : exist.itemId,
       customerId: customerId ? String(customerId) : exist.customerId,
       quantity: quantity ? +Number(quantity) : exist.quantity,
-      total: total ? +Number(total) : exist.total,
+      total: total ? (+total < 0 ? 0 : +Number(total)) : exist.total,
       transaction: transaction ? transaction : exist.transaction,
       orderingCosts: orderingCosts
-        ? +Number(orderingCosts)
+        ? +orderingCosts < 0
+          ? 0
+          : +Number(orderingCosts)
         : exist.orderingCosts,
-      storageCosts: storageCosts ? +Number(storageCosts) : exist.storageCosts,
+      storageCosts: storageCosts
+        ? +storageCosts < 0
+          ? 0
+          : +Number(storageCosts)
+        : exist.storageCosts,
       type: type ? String(type) : exist.type,
     },
   });

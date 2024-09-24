@@ -238,9 +238,12 @@ export const CreateForm = ({
               <Input
                 placeholder="Quantity"
                 type="number"
+                min={1}
+                max={selectedItem?.quantity}
                 {...register('quantity', {
                   required: true,
                   valueAsNumber: true,
+                  min: 1,
                 })}
               />
             </div>
@@ -273,9 +276,11 @@ export const CreateForm = ({
               <Input
                 placeholder="Total"
                 type="number"
+                min={0}
                 {...register('total', {
                   required: true,
                   valueAsNumber: true,
+                  min: 0,
                 })}
               />
             </div>
